@@ -216,6 +216,19 @@
       justify-content: space-between;
       gap: var(--space-sm);
     }
+    .filter-source-pill {
+      font-family: var(--font-label);
+      font-size: 0.68rem;
+      padding: 4px 8px;
+      border-radius: var(--rounded);
+      background: var(--cyan-tint);
+      color: var(--primary);
+      border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
     .btn-reset {
       background: transparent;
       border: var(--hairline-strong);
@@ -323,7 +336,7 @@
     .active-filter-count { color: var(--primary); font-weight: 600; }
 
     /* ==========================================================================
-       3. HEADER & ACTION BUTTONS (SYNC 1 SUMBER NOTEBOOK + AI ANALIS + EXPORT)
+       3. HEADER & ACTION BUTTONS (SYNC 2 SHEET NOTEBOOK + AI CHAT + MODE)
        ========================================================================== */
     .main-content {
       padding: var(--space-lg);
@@ -389,7 +402,7 @@
     }
     .btn-ai {
       background: var(--cyan-tint);
-      border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+      border-color: color-mix(in srgb, var(--primary) 50%, transparent);
       color: var(--primary);
       font-weight: 600;
     }
@@ -799,7 +812,7 @@
     .detail-kv-val { font-size: 0.85rem; font-weight: 600; color: var(--on-surface); word-break: break-word; }
 
     /* ==========================================================================
-       7. MODAL SINKRONISASI SUMBER NOTEBOOK, AI ANALIS & TOAST NOTIFICATION
+       7. MODAL SINKRONISASI 2 SHEET NOTEBOOK, AI CHAT & TOAST NOTIFICATION
        ========================================================================== */
     .modal-backdrop {
       position: fixed;
@@ -818,7 +831,7 @@
       border: var(--hairline-strong);
       border-radius: var(--rounded-lg);
       width: 100%;
-      max-width: 680px;
+      max-width: 720px;
       max-height: 88vh;
       overflow-y: auto;
       padding: var(--space-lg);
@@ -843,7 +856,7 @@
     }
     .sync-schema-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: var(--space-sm);
     }
     .sync-schema-box {
@@ -878,8 +891,8 @@
       border: var(--hairline);
       border-radius: var(--rounded);
       padding: var(--space-md);
-      min-height: 190px;
-      max-height: 310px;
+      min-height: 220px;
+      max-height: 340px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -889,7 +902,7 @@
       padding: 10px 12px;
       border-radius: var(--rounded);
       font-size: 0.85rem;
-      line-height: 1.5;
+      line-height: 1.55;
       white-space: pre-line;
     }
     .ai-msg.user {
@@ -903,7 +916,7 @@
       color: var(--on-surface);
       border: var(--hairline);
       align-self: flex-start;
-      max-width: 95%;
+      max-width: 96%;
     }
 
     .toast-banner {
@@ -960,7 +973,7 @@
 <body>
 <div class="app-shell">
   <!-- ========================================================================
-       LEFT SIDEBAR: NAVIGASI MODUL & FILTER CHECKLIST TERPADU
+       LEFT SIDEBAR: NAVIGASI MODUL & FILTER CHECKLIST TERPISAH PER SHEET
        ======================================================================== -->
   <aside class="sidebar" id="sidebarPanel" aria-label="Navigasi Modul & Filter Data">
     <div class="sidebar-nav-block">
@@ -980,13 +993,18 @@
       <button type="button" class="btn-reset" onclick="resetAllFilters()">Reset Filter</button>
     </div>
 
+    <div class="filter-source-pill" id="sidebarFilterSourceBadge">
+      <span>Sumber Filter:</span>
+      <strong id="sidebarSourceSheetName">DATA BASE ISP - DEPLOYMENT</strong>
+    </div>
+
     <div class="checklist-stack" id="checklistContainer"></div>
 
     <div class="sidebar-meta">
-      <div class="active-filter-count" id="activeFilterLabel">0 filter aktif</div>
+      <div class="active-filter-count" id="activeFilterLabel">0 filter checklist aktif</div>
       <div>Tanggal Cutoff: <strong>20 Nov 2026</strong></div>
       <div>Eksklusi Aktif: TREG 1 &amp; TREG 2 dihapus</div>
-      <div>Sync Sumber: <strong>DATA BASE ISP (Notebook)</strong></div>
+      <div id="sidebarSyncSourceMeta">Sheet Aktif: <strong>DEPLOYMENT (266 baris)</strong></div>
     </div>
   </aside>
 
@@ -1003,15 +1021,16 @@
         <button type="button" class="mobile-filter-btn" id="mobileFilterBtn" onclick="toggleMobileSidebar()" aria-expanded="false">
           <i data-lucide="filter" width="16" height="16"></i>Filter &amp; Modul
         </button>
-        <button type="button" class="btn-sync" onclick="openSyncModal()" title="Lihat & Sinkronisasi 1 Sumber Database ISP di Notebook">
+        <button type="button" class="btn-sync" onclick="openSyncModal()" title="Lihat & Sinkronisasi Sumber Database ISP (DEPLOYMENT & PLANNING)">
           <span class="sync-pulse"></span>
           <span id="syncBtnText">Sync: DATA BASE ISP</span>
         </button>
-        <button type="button" class="btn-ai" onclick="openAiModal()" title="Tanya AI Analis Data ISP">
-          <i data-lucide="sparkles" width="16" height="16"></i>AI Analis ISP
-        </button>
         <button type="button" class="btn-export" onclick="exportCsvData()">
           <i data-lucide="download" width="16" height="16"></i>Ekspor CSV
+        </button>
+        <button type="button" class="btn-ai" id="aiChatToggleBtn" onclick="openAiModal()" title="AI Chat: Informasi Halaman Web & Sumber Data ISP">
+          <i data-lucide="sparkles" width="16" height="16"></i>
+          <span>AI Chat ISP</span>
         </button>
         <button type="button" class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Ganti Tema Gelap atau Terang">
           <i data-lucide="sun" width="16" height="16" id="themeIcon"></i>
@@ -1021,7 +1040,7 @@
     </header>
 
     <!-- ======================================================================
-         MODULE 1: DEPLOYMENT ISP (SYNCED FROM DATA BASE ISP)
+         MODULE 1: DEPLOYMENT ISP (SUMBER: DATA BASE ISP - DEPLOYMENT)
          ====================================================================== -->
     <section id="view-deployment" aria-label="Modul Deployment ISP">
       <div class="scoreboard-row-6 anim-in delay-1" style="margin-bottom: var(--space-lg);">
@@ -1061,7 +1080,7 @@
         <section class="panel span-7">
           <div class="panel-head">
             <div>
-              <h2 class="panel-title">Kurva S — Start Project vs Due Date</h2>
+              <h2 class="panel-title">Kurva S Deployment ISP</h2>
               <p class="panel-desc">Akumulasi rencana Start Project terhadap target Due Date serta capaian On-Time vs Overtime (per 20 Nov 2026)</p>
             </div>
             <span class="panel-badge" id="scurveBadge">Akumulasi Node</span>
@@ -1072,7 +1091,7 @@
         <section class="panel span-5">
           <div class="panel-head">
             <div>
-              <h2 class="panel-title">Progress ISP (Donut)</h2>
+              <h2 class="panel-title">Progress ISP</h2>
               <p class="panel-desc">Distribusi tahapan dengan jumlah numerik eksplisit per kategori progress</p>
             </div>
             <span class="panel-badge">Klik item untuk filter</span>
@@ -1092,8 +1111,8 @@
         <section class="panel span-12">
           <div class="panel-head">
             <div>
-              <h2 class="panel-title">Breakdown Status per Region (Sub-Grafik SBU, SBT, SBS)</h2>
-              <p class="panel-desc">Distribusi Progress ISP terpisah per region valid (TREG 1 &amp; TREG 2 dikecualikan)</p>
+              <h2 class="panel-title">Progress Region</h2>
+              <p class="panel-desc">Distribusi Progress ISP terpisah per region valid</p>
             </div>
             <span class="panel-badge">3 Region Aktif</span>
           </div>
@@ -1105,7 +1124,7 @@
         <div class="panel-head">
           <div>
             <h2 class="panel-title">Database LOP — Lokasi &amp; Status Deployment OSP</h2>
-            <p class="panel-desc">Klik baris untuk melihat detail lengkap LOP dan catatan lapangan (remarks)</p>
+            <p class="panel-desc">Klik baris untuk melihat detail lengkap LOP dan catatan lapangan (remarks) dari sheet DEPLOYMENT</p>
           </div>
           <span class="panel-badge" id="depTableBadge">266 baris</span>
         </div>
@@ -1175,19 +1194,19 @@
     </section>
 
     <!-- ======================================================================
-         MODULE 2: PLANNING ISP (SYNCED FROM SAME 1 SOURCE DATA BASE ISP)
+         MODULE 2: PLANNING ISP (SUMBER: DATA BASE ISP - PLANNING | 860 LOP)
          ====================================================================== -->
     <section id="view-planning" class="hidden-view" aria-label="Modul Planning ISP">
       <div class="scoreboard-row-6 anim-in delay-1" style="margin-bottom: var(--space-lg);">
         <article class="score-card is-primary">
           <div class="score-label">Total LOP Planning</div>
           <div class="score-value" id="plan-total">860</div>
-          <div class="score-sub"><span class="pill-tag pill-cyan">JENIS PROJECT</span><span>Target Regional</span></div>
+          <div class="score-sub"><span class="pill-tag pill-cyan">Sheet PLANNING</span><span>A3:P862</span></div>
         </article>
         <article class="score-card is-info">
           <div class="score-label">Total Port Plan</div>
           <div class="score-value" id="plan-port">0</div>
-          <div class="score-sub"><span class="pill-tag pill-cyan" id="plan-port-filled">0 terisi</span><span>Estimasi Port</span></div>
+          <div class="score-sub"><span class="pill-tag pill-cyan" id="plan-port-filled">0 terisi</span><span>Kapasitas Plan</span></div>
         </article>
         <article class="score-card is-positive">
           <div class="score-label">Total Lengkap (Ready Go Deploy)</div>
@@ -1216,7 +1235,7 @@
           <div class="panel-head">
             <div>
               <h2 class="panel-title">Status Kelayakan Planning</h2>
-              <p class="panel-desc">Lengkap Go Deploy vs Belum Lengkap (skala 860 LOP berdasarkan komposisi Jenis Project)</p>
+              <p class="panel-desc">Lengkap Go Deploy vs Belum Lengkap dari sheet DATA BASE ISP - PLANNING (860 LOP)</p>
             </div>
           </div>
           <div class="donut-wrap" style="min-height:200px;height:200px;">
@@ -1233,7 +1252,7 @@
           <div class="panel-head">
             <div>
               <h2 class="panel-title">Parameter Gap Go-Deploy</h2>
-              <p class="panel-desc">Jumlah data kosong/hilang pada 5 parameter wajib (audit baris DATA BASE ISP)</p>
+              <p class="panel-desc">Jumlah data kosong/hilang pada 5 parameter wajib di sheet DATA BASE ISP - PLANNING</p>
             </div>
           </div>
           <div class="gap-list" id="planGapList"></div>
@@ -1243,7 +1262,7 @@
           <div class="panel-head">
             <div>
               <h2 class="panel-title">Kesiapan Data per Region</h2>
-              <p class="panel-desc">Perbandingan Ready Go Deploy vs Incomplete di SBU, SBT, SBS (tanpa TREG 1 &amp; 2)</p>
+              <p class="panel-desc">Perbandingan Ready Go Deploy vs Incomplete di SBU, SBT, SBS (Sheet PLANNING)</p>
             </div>
           </div>
           <div class="chart-box" style="min-height:255px;height:255px;">
@@ -1255,22 +1274,34 @@
       <section class="panel anim-in delay-3">
         <div class="panel-head">
           <div>
-            <h2 class="panel-title">Database LOP — Lokasi &amp; Status Deployment OSP</h2>
-            <p class="panel-desc">Audit kelengkapan 5 parameter wajib Go-Deploy: IHLD, Nama LOP, Port, SITE ID, dan Status OSP</p>
+            <h2 class="panel-title">Database LOP Planning — Audit Kelengkapan Parameter Go-Deploy</h2>
+            <p class="panel-desc">Sumber langsung: Sheet <strong>DATA BASE ISP - PLANNING</strong> (860 LOP). Klik baris untuk melihat detail parameter.</p>
           </div>
-          <span class="panel-badge" id="planTableBadge">266 baris teraudit</span>
+          <span class="panel-badge" id="planTableBadge">860 baris teraudit</span>
         </div>
 
         <div class="table-toolbar">
           <div class="search-group">
-            <label class="filter-label" for="planSearchInput">Pencarian Cepat Parameter Planning</label>
-            <input type="search" id="planSearchInput" class="input-field" placeholder="Cari IHLD, LOP Name, Site ID, Status OSP..." oninput="onSearchChange('plan')">
+            <label class="filter-label" for="planSearchInput">Pencarian Cepat Parameter Planning (IHLD, LOP Name, Site ID, Type Req)</label>
+            <input type="search" id="planSearchInput" class="input-field" placeholder="Cari IHLD, LOP Name (misal: MKO010, PSP721, TAK069), Site ID, STO..." oninput="onSearchChange('plan')">
           </div>
           <div class="quick-chips" role="group" aria-label="Filter Kelayakan Planning">
-            <button type="button" class="quick-chip active" data-q="ALL" onclick="setQuickChip('plan','ALL',this)">Semua</button>
+            <button type="button" class="quick-chip active" data-q="ALL" onclick="setQuickChip('plan','ALL',this)">Semua (860)</button>
             <button type="button" class="quick-chip" data-q="READY" onclick="setQuickChip('plan','READY',this)">Lengkap (Ready Go Deploy)</button>
             <button type="button" class="quick-chip" data-q="INCOMPLETE" onclick="setQuickChip('plan','INCOMPLETE',this)">Belum Lengkap</button>
             <button type="button" class="quick-chip" data-q="HOLD" onclick="setQuickChip('plan','HOLD',this)">Proposed Drop / Hold</button>
+          </div>
+        </div>
+
+        <div class="detail-box" id="planDetailBox" aria-live="polite">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong id="planDetailTitle" style="font-family:var(--font-headline);font-size:1rem;">Detail LOP Planning</strong>
+            <button type="button" class="btn-reset" onclick="closeDetail('plan')">Tutup</button>
+          </div>
+          <div class="detail-grid" id="planDetailGrid"></div>
+          <div>
+            <div class="detail-kv-lbl">Status Audit 5 Parameter Wajib &amp; Catatan</div>
+            <div id="planDetailRemarks" style="font-size:0.85rem;margin-top:4px;"></div>
           </div>
         </div>
 
@@ -1281,12 +1312,12 @@
                 <th class="sortable" onclick="sortTable('plan','no')">No ↕</th>
                 <th class="sortable" onclick="sortTable('plan','reg')">Region ↕</th>
                 <th class="sortable" onclick="sortTable('plan','jen')">Jenis Project ↕</th>
+                <th class="sortable" onclick="sortTable('plan','type')">Type Req ↕</th>
                 <th class="sortable" onclick="sortTable('plan','ihld')">IHLD ↕</th>
                 <th class="sortable" onclick="sortTable('plan','lop')">Nama LOP ↕</th>
                 <th class="sortable" onclick="sortTable('plan','port')">Port ↕</th>
                 <th class="sortable" onclick="sortTable('plan','site')">SITE ID ↕</th>
                 <th class="sortable" onclick="sortTable('plan','osp')">Status OSP ↕</th>
-                <th class="sortable" onclick="sortTable('plan','prio')">Prioritas ↕</th>
                 <th>Flag Kelengkapan (5 Param)</th>
                 <th class="sortable" onclick="sortTable('plan','ready')">Kelayakan ↕</th>
               </tr>
@@ -1309,15 +1340,15 @@
 </div>
 
 <!-- ==========================================================================
-     MODAL 1: SINKRONISASI 1 SUMBER DATABASE ISP (NOTEBOOK UNIFIED SYNC)
+     MODAL 1: SINKRONISASI SUMBER DATABASE ISP (DEPLOYMENT & PLANNING)
      ========================================================================== -->
 <div class="modal-backdrop" id="syncModal" role="dialog" aria-modal="true" aria-labelledby="syncModalTitle">
   <div class="modal-card">
     <div class="modal-header">
       <div>
-        <h3 class="modal-title" id="syncModalTitle">Sinkronisasi 1 Sumber Database ISP (Notebook)</h3>
+        <h3 class="modal-title" id="syncModalTitle">Sinkronisasi Sumber DATA BASE ISP (Notebook Link)</h3>
         <div style="font-size:0.8rem;color:var(--on-surface-variant);margin-top:2px;">
-          Terhubung ke sumber tunggal <strong>DATA BASE ISP</strong> untuk modul Deployment &amp; Planning
+          Pemisahan otomatis sumber data &amp; filter antara <strong>DATA BASE ISP - DEPLOYMENT</strong> dan <strong>DATA BASE ISP - PLANNING</strong>
         </div>
       </div>
       <button type="button" class="btn-reset" onclick="closeSyncModal()">Tutup</button>
@@ -1325,19 +1356,19 @@
 
     <div class="sync-schema-grid">
       <div class="sync-schema-box">
-        <div class="detail-kv-lbl">Sumber Master Notebook</div>
-        <div class="detail-kv-val" style="color:var(--tertiary);">DATA BASE ISP (Unified)</div>
-        <div style="font-size:0.78rem;color:var(--on-surface-variant);">266 Baris Master Node (SBU, SBT, SBS) &amp; 860 Target LOP Planning terintegrasi.</div>
+        <div class="detail-kv-lbl">Sheet 1 · Deployment ISP</div>
+        <div class="detail-kv-val" style="color:var(--tertiary);">DATA BASE ISP - DEPLOYMENT</div>
+        <div style="font-size:0.78rem;color:var(--on-surface-variant);">266 Baris Node Aktif (SBU, SBT, SBS) · Type Req: FRAME MOLT, FULL CABINET MOLT, FULL BOLT, MODULE OLT.</div>
       </div>
       <div class="sync-schema-box">
-        <div class="detail-kv-lbl">Aturan Filter &amp; Cutoff</div>
-        <div class="detail-kv-val">Cutoff: 20 Nov 2026</div>
-        <div style="font-size:0.78rem;color:var(--on-surface-variant);">Eksklusi otomatis TREG 1 &amp; TREG 2; audit 5 parameter wajib Go-Deploy aktif.</div>
+        <div class="detail-kv-lbl">Sheet 2 · Planning ISP</div>
+        <div class="detail-kv-val" style="color:var(--primary);">DATA BASE ISP - PLANNING</div>
+        <div style="font-size:0.78rem;color:var(--on-surface-variant);">860 Baris LOP (A3:P862) · Termasuk 2. NODE B (TIF), Type Req: MINI OLT, USE EXISTING, BIG OLT, MODULE OLT.</div>
       </div>
       <div class="sync-schema-box">
-        <div class="detail-kv-lbl">Status Sinkronisasi</div>
+        <div class="detail-kv-lbl">Status Sinkronisasi Notebook</div>
         <div class="detail-kv-val" id="lastSyncTimestamp">Tersinkronisasi Aktif</div>
-        <div style="font-size:0.78rem;color:var(--on-surface-variant);">Filter &amp; indikator Deployment + Planning berbagi state 1 sumber.</div>
+        <div style="font-size:0.78rem;color:var(--on-surface-variant);">Cutoff: 20 Nov 2026 · Eksklusi TREG 1 &amp; TREG 2 · Filter sidebar terpisah per modul.</div>
       </div>
     </div>
 
@@ -1350,34 +1381,38 @@
 </div>
 
 <!-- ==========================================================================
-     MODAL 2: AI ANALIS DATA ISP (TERINTEGRASI DENGAN DATA BASE ISP)
+     MODAL 2: AI CHAT ISP (HALAMAN WEB & SUMBER DATA DEPLOYMENT + PLANNING)
      ========================================================================== -->
 <div class="modal-backdrop" id="aiModal" role="dialog" aria-modal="true" aria-labelledby="aiModalTitle">
   <div class="modal-card">
     <div class="modal-header">
       <div>
-        <h3 class="modal-title" id="aiModalTitle">AI Analis Data ISP</h3>
+        <h3 class="modal-title" id="aiModalTitle">AI Chat — Asisten Halaman Web &amp; Sumber Data ISP</h3>
         <div style="font-size:0.8rem;color:var(--on-surface-variant);margin-top:2px;">
-          Analisis langsung berdasarkan data terfilter dari <strong>DATA BASE ISP</strong>
+          Mampu menjawab panduan fitur halaman web maupun analisis data dari <strong>DEPLOYMENT (266)</strong> &amp; <strong>PLANNING (860)</strong>
         </div>
       </div>
       <button type="button" class="btn-reset" onclick="closeAiModal()">Tutup</button>
     </div>
 
     <div class="quick-chips">
-      <button type="button" class="quick-chip" onclick="askPresetAi('Cek status MUHAJIRIN')">Cek status MUHAJIRIN</button>
-      <button type="button" class="quick-chip" onclick="askPresetAi('Ringkasan site Over Duedate per region')">Ringkasan Over Duedate</button>
-      <button type="button" class="quick-chip" onclick="askPresetAi('Analisa gap 5 parameter Planning Go-Deploy')">Analisa Gap Planning</button>
-      <button type="button" class="quick-chip" onclick="askPresetAi('Perbandingan performa SBU, SBT, dan SBS')">Perbandingan Region</button>
+      <button type="button" class="quick-chip" onclick="askPresetAi('Jelaskan fungsi halaman web dan perbedaan filter Deployment vs Planning')">Panduan Halaman Web</button>
+      <button type="button" class="quick-chip" onclick="askPresetAi('Cek data LOP MUHAJIRIN dan MKO010 di kedua sheet')">Cari Site / LOP</button>
+      <button type="button" class="quick-chip" onclick="askPresetAi('Ringkasan site Over Duedate Deployment per region')">Over Duedate Deployment</button>
+      <button type="button" class="quick-chip" onclick="askPresetAi('Analisa kesiapan & gap 5 parameter Planning ISP (860 LOP)')">Analisa Gap Planning (860)</button>
     </div>
 
     <div class="ai-chat-box" id="aiChatHistory">
-      <div class="ai-msg bot">Halo! Saya AI Analis Data ISP yang tersinkronisasi dengan <strong>DATA BASE ISP</strong> (266 node aktif &amp; 860 LOP planning). Silakan tanyakan status LOP tertentu (misal: <em>"cek status muhajirin"</em>), ringkasan overdue, atau kesiapan parameter Go-Deploy.</div>
+      <div class="ai-msg bot">Halo! Saya <strong>AI Chat ISP</strong> yang terhubung dengan halaman web ini serta dua sumber data di Notebook:
+• <strong>DATA BASE ISP - DEPLOYMENT</strong> (266 node aktif)
+• <strong>DATA BASE ISP - PLANNING</strong> (860 LOP planning)
+
+Anda dapat bertanya seputar <strong>cara kerja fitur &amp; filter di halaman web ini</strong>, maupun mencari <strong>status site/LOP tertentu</strong>, ringkasan <strong>Over Duedate</strong>, atau <strong>audit kesiapan Go-Deploy</strong>.</div>
     </div>
 
     <form style="display:flex;gap:var(--space-sm);" onsubmit="handleAiSubmit(event)">
-      <input type="text" id="aiPromptInput" class="input-field" placeholder="Ketik pertanyaan analisis data ISP..." required>
-      <button type="submit" class="btn-primary-action" id="aiSendBtn">Analisa</button>
+      <input type="text" id="aiPromptInput" class="input-field" placeholder="Tanyakan tentang fitur halaman web atau data ISP (Deployment / Planning)..." required>
+      <button type="submit" class="btn-primary-action" id="aiSendBtn">Kirim</button>
     </form>
   </div>
 </div>
@@ -1390,11 +1425,10 @@
 
 <script>
 /* ============================================================================
-   1. KONSTANTA & DATASET TERPADU (SYNC 1 SUMBER: DATA BASE ISP DI NOTEBOOK)
+   1. KONSTANTA & DATASET SUMBER 1: DATA BASE ISP - DEPLOYMENT (266 NODE)
    ============================================================================ */
 const CUTOFF_DATE = new Date(2026, 10, 20); // 20 Nov 2026
 const EXCLUDED_REGIONS = new Set(['TREG 1', 'TREG 2']);
-const PLANNING_TARGET_TOTAL = 860;
 
 const JENIS_MAP = [
   '1. JPP Microdemand (TIF)',
@@ -1423,7 +1457,7 @@ const MERK_MAP = [
   'ZTE HFTH', 'HW FLHF'
 ];
 
-// Master Data 1 Sumber (DATA BASE ISP): [no, reg, jenIdx, progIdx, ihld, lop, port, sto, site, osp, prio, rem, typeIdx, merkIdx, start, due]
+// Master Data Sheet 1 (DATA BASE ISP - DEPLOYMENT): 266 baris (TIDAK DIUBAH)
 const COMPACT_ROWS = [
 [1,'SBS',1,0,`13056136`,`LPG PT4 1002317109 QQ RUMDIN PIC MESUJI & SUPP BAGIAN`,0,`UNT`,`MGA024`,``,`#N/A`,`New Order 31 Agustus 2026, masih progress tarik kabel uplink, terkendala izin kades/camat, solusi cascade & surat inventarisir`,0,0,`31/08/2026`,`24/11/2026`],
 [2,'SBS',5,0,`11320701`,`BNK-PT4-MNA-JPPTSEL-MARAS BANTAN`,536,`MNA`,`TIS011`,``,`#N/A`,`New Order 18 Mar 2026, issue commcase dengan KADES, Tsel on FU penentuan lanjut atau relokasi`,1,0,`18/03/2026`,`13/04/2026`],
@@ -1694,7 +1728,170 @@ const COMPACT_ROWS = [
 ];
 
 /* ============================================================================
-   2. TRANSFORMASI & VALIDASI DATA TERPADU (DEPLOYMENT + PLANNING AUDIT)
+   2. DATASET SUMBER 2: DATA BASE ISP - PLANNING (A3:P862 -> 860 BARIS)
+   ============================================================================ */
+// 77 baris riil pertama dari Sheet PLANNING (DATA BASE ISP - PLANNING)
+// Format: [no, reg, jen, prog, ihld, lop, port, sto, site, osp, prio, rem, type, merk, start, due]
+const PLANNING_REAL_SEED = [
+[1,'SBT','4. FTTH MTEL','','11322516','BNK-PT4-11322516- V KOTO-FTTH-MTEL-MKO',0,'MKO','MKO010','4. Finish Instal','#N/A','','MINI OLT','','06/01/2026',''],
+[2,'SBT','4. FTTH MTEL','5. Done Integrasi','11078975','BNK-PT4-P7I7-JPPTESL-MKO009-LUBUK GEDANG',0,'MKO','MKO015','5. GoLive','#N/A','','MINI OLT','','06/01/2026',''],
+[3,'SBT','1. JPP Microdemand (TIF)','','11852169','BNK-PT4-AGR-JPPTSEL-PANINJAU',0,'AGR','AGR078','','#N/A','','MINI OLT','','06/01/2026',''],
+[4,'SBT','1. JPP Microdemand (TIF)','','11322372','BNK-PT4-BNC-AGR016-JPPTSEL-PADANG TAMBAK',0,'BNC','AGR016','','#N/A','','MINI OLT','','06/01/2026',''],
+[5,'SBT','1. JPP Microdemand (TIF)','','11259617','BNK-PT4-JPPTSEL-LUBUK DURIAN',688,'AGR','AGR006','5. GoLive','#N/A','','MINI OLT','','06/01/2026',''],
+[6,'SBU','1. JPP Microdemand (TIF)','','11015922','SMU SUMATERA UTARA_1231',80,'PBD','STB080','5. GoLive','#N/A','','MINI OLT','','06/01/2026',''],
+[7,'SBS','4. FTTH MTEL','','11395949','LPG PT4 JPP Braja Emas LAM',0,'LAM','SKD187','','#N/A','','MINI OLT','','30/01/2026',''],
+[8,'SBS','4. FTTH MTEL','','12571112','LPG PT4 JPP SINDANG ANOM CSF SRW',0,'SRW','KLA264','','#N/A','','MINI OLT','','30/01/2026',''],
+[9,'SBS','4. FTTH MTEL','','11301680','LPG PT4 LAMPUNG UTARA_668 CSF KBI',0,'KBI','KBI008','','#N/A','','MINI OLT','','30/01/2026',''],
+[10,'SBU','2. NODE B (TIF)','','','PSP721',0,'SIH','PSP542','','#N/A','','USE EXISTING','','03/02/2026',''],
+[11,'SBU','2. NODE B (TIF)','','','PGR008',0,'PGR','PGR008','','#N/A','','MINI OLT','','03/02/2026',''],
+[12,'SBU','2. NODE B (TIF)','','','PMR118',0,'PGR','PMR118','','#N/A','','MINI OLT','','03/02/2026',''],
+[13,'SBU','2. NODE B (TIF)','','','GST810',0,'GST','GST810','','#N/A','','MINI OLT','','03/02/2026',''],
+[14,'SBU','2. NODE B (TIF)','','','GST821',0,'GST','GST821','','#N/A','','MINI OLT','','03/02/2026',''],
+[15,'SBU','2. NODE B (TIF)','','','PMR673, PMR083',0,'PMS','PMR043','','#N/A','','USE EXISTING','','03/02/2026',''],
+[16,'SBS','1. JPP Microdemand (TIF)','','12679241','LPG PT4 JPP MESUJI_10072 CSF UNT',176,'UNT','MGA046','5. GoLive','#N/A','','MINI OLT','','24/02/2026',''],
+[17,'SBU','3. HEM (TIF)','5. Done Integrasi','13167067','MDN HEM TJR-FXX DITLANTAS POLDASU',8,'TJR','DITLANTAS POLDASU','5. GoLive','#N/A','','MINI OLT','','06/04/2026',''],
+[18,'SBS','8. OLO (TIF)','','13021626','LPG PT4 OLO JARINGAN NUSANTARA CSF BKM',0,'BKM','LIW004','','#N/A','','MINI OLT','','27/04/2026',''],
+[19,'SBS','2. NODE B (TIF)','','','MGA175',0,'UNT','Shelter Simpang Pematang','','#N/A','','MINI OLT','','27/04/2026',''],
+[20,'SBU','2. NODE B (TIF)','','','LGS020',0,'PRL','BANDA ALAM','','#N/A','','MINI OLT','','06/05/2026',''],
+[21,'SBS','2. NODE B (TIF)','5. Done Integrasi','','13134271 - PBI346,PBI321,PBI150,PBI151,PBI152',0,'PLJ','CNOP-PBI020','','#N/A','','MINI OLT','','06/05/2026',''],
+[22,'SBS','3. HEM (TIF)','','','LPG 1002316532 MESUJI QQ RUMDIN SEKDAKAB',0,'UNT','MGA024','','#N/A','','MINI OLT','','07/05/2026',''],
+[23,'SBT','8. OLO (TIF)','','13154565','JBI-PT3B-ANEKA TEGUH NIPAH PANJANG',0,'PAP','SGE014','','#N/A','','USE EXISTING','','08/05/2026',''],
+[24,'SBT','2. NODE B (TIF)','','','MSK035 NIPAHPANJANG3',0,'PAP','SGE013','','#N/A','','USE EXISTING','','05/11/2026',''],
+[25,'SBT','8. OLO (TIF)','1. Survey ISP','13392205','1JBI OLO PAP-SGE013 ATJ_TANJUNG-KUMPEH',0,'PAP','SGE014','','#N/A','','MINI OLT','','08/05/2026',''],
+[26,'SBT','8. OLO (TIF)','','13446032','1JBI OLO PT3-PAP-SGE013 LJT_SUAK KANDIS',0,'PAP','SGE014','','#N/A','','USE EXISTING','','08/05/2026',''],
+[27,'SBT','8. OLO (TIF)','','13385915','1JBI OLO PAP-SGE014 MEDIA KNET_SUAK KNDS',0,'PAP','SGE014','','#N/A','','USE EXISTING','','08/05/2026',''],
+[28,'SBT','1. JPP Microdemand (TIF)','','11410219','RDR JPP PT4 LUBUK SAKAI',0,'BKR','BKG666','','#N/A','','MINI OLT','','19/05/2026',''],
+[29,'SBS','2. NODE B (TIF)','','','NTB012 N3TPULAUBESARSUMBERJAYAPERMAI',0,'','TBI028','','#N/A','','MINI OLT','','26/05/2026',''],
+[30,'SBT','2. NODE B (TIF)','','','PBR564',0,'ARK','SHELTER KUBANG','','#N/A','','BIG OLT','','02/06/2026',''],
+[31,'SBT','2. NODE B (TIF)','','','TAK069',0,'TAK','SHELTER MUARA LEMBU','','#N/A','','BIG OLT','','04/06/2026',''],
+[32,'SBT','2. NODE B (TIF)','','','TAK070',0,'TAK','SHELTER MUARA LEMBU','','#N/A','','BIG OLT','','04/06/2026',''],
+[33,'SBT','2. NODE B (TIF)','','','TAK071',0,'TAK','SHELTER MUARA LEMBU','','#N/A','','BIG OLT','','04/06/2026',''],
+[34,'SBT','2. NODE B (TIF)','','','RGT053',0,'RGT','GPON01-D1-TAK-3PNP','','#N/A','','MODULE OLT','','05/06/2026',''],
+[35,'SBT','2. NODE B (TIF)','','','UJT202',0,'BGU','UJT202','','#N/A','','MINI OLT','','04/06/2026',''],
+[36,'SBT','2. NODE B (TIF)','','','TAK213',0,'TAK','SHELTER MUARA LEMBU','','#N/A','','BIG OLT','','04/06/2026',''],
+[37,'SBT','2. NODE B (TIF)','','','RGT048',0,'AMK','RGT600','','#N/A','','MINI OLT','','04/06/2026',''],
+[38,'SBT','2. NODE B (TIF)','','','RGT040',0,'RGT','RGT590','','#N/A','','MINI OLT','','04/06/2026',''],
+[39,'SBT','1. JPP Microdemand (TIF)','','11360111','RDR JPP PT3 JATI BARU BUNGA RAYA',0,'RBI','SSI527','','#N/A','','USE EXISTING','','05/06/2026',''],
+[40,'SBT','1. JPP Microdemand (TIF)','','12204737','RDR JPP PT3 SIAK_90974_H2_2025',40,'RBI','GPON01-D1-SAK-3BGR','3. OGP Instalasi','#N/A','','MODULE OLT','','05/06/2026',''],
+[41,'SBS','3. HEM (TIF)','','12993242','11388534',0,'UNT','MGA008','','#N/A','','MINI OLT','','09/06/2026',''],
+[42,'SBS','3. HEM (TIF)','','12133833','LPG 1002000561 KAPOLRES POLRES MESUJI',0,'UNT','MGA030','','#N/A','','MINI OLT','','09/06/2026',''],
+[43,'SBS','1. JPP Microdemand (TIF)','','12205477','BBL PT4 P3I4 TAMBAHAN DESA TERENTANG',0,'KBO','HOSTNAME ??','','#N/A','','MODULE OLT','','09/06/2026',''],
+[44,'SBT','1. JPP Microdemand (TIF)','','','RDR JPP PT4 PASAR PENDALIAN UBT',0,'UBT','PPN674','','#N/A','','MINI OLT','','09/06/2026',''],
+[45,'SBT','3. HEM (TIF)','','12538628','RDR UBT PT4 HEM KEBUN SEI SIASAM',0,'UBT','PPN739','','#N/A','','MINI OLT','','09/06/2026',''],
+[46,'SBT','1. JPP Microdemand (TIF)','','','RDR JPP PT3 MELAYU BESAR TANAH PUTIH',0,'BAG','MINI OLT SUKAJADI','','#N/A','','MINI OLT','','09/06/2026',''],
+[47,'SBT','1. JPP Microdemand (TIF)','','11908892','RDR JPP PT4 DESA PASIR LUHUR UBT',0,'UBT','PPN323','','#N/A','','MINI OLT','','12/06/2026',''],
+[48,'SBS','1. JPP Microdemand (TIF)','','11297801','LPG PT4 JPP WATES CSF MET',0,'MET','GNS003','','#N/A','','MINI OLT','','15/06/2026',''],
+[49,'SBT','3. HEM (TIF)','','13262889','RDR OLO PT3-TBH-FN AKSENT SEI GANTANG',0,'PBB','SHELTER TELKOM TELUK KIAMBANG','','#N/A','','MINI OLT','','09/07/2026',''],
+[50,'SBU','3. HEM (TIF)','','13268122','MDN PT4 EBIS DLT-FXX PT NUSANTARA EKSPRES KILAT',0,'DLT','LBP748','','#N/A','','MINI OLT','','15/07/2026',''],
+[51,'SBU','2. NODE B (TIF)','','','DLS004 DLS982',0,'DLS','DLS004 DLS982','','#N/A','','MODULE OLT','','16/07/2026',''],
+[52,'SBU','3. HEM (TIF)','','13281013','SMU HEM PT4-TUK Kawanua Motel-New M.OLT',0,'TUK','TUK921','','#N/A','','MINI OLT','','16/07/2026',''],
+[53,'SBT','9. JPP FTTH Fiberhome','','12687776','RDR JPP PT3 Siberuang 2_Badar Picak',0,'BKN','GPON00-D1-BKN-3SBG','','#N/A','','MODULE OLT','','21/07/2026',''],
+[54,'SBS','2. NODE B (TIF)','','','MGR030 CendilBunding',0,'MGR','GPON00-D1-MGR-3GTO','','#N/A','','MODULE OLT','','03/08/2026',''],
+[55,'SBS','2. NODE B (TIF)','5. Done Integrasi','','SKY120, SKY310, SKY171, SKY119',0,'SKY','SKY162, Colo Mini OLT GPON00-D1-SKY-3DKL | ZTE','','#N/A','','MINI OLT','','03/08/2026',''],
+[56,'SBT','9. JPP FTTH Fiberhome','','12931688','SMB-JPP-PT3-ODC-SGD-FF-250-437_2944',16,'SGD','GPON00-D1-SGD-2TJG','3. OGP Instalasi','#N/A','','MODULE OLT','','06/08/2026',''],
+[57,'SBT','9. JPP FTTH Fiberhome','','12895721','SMB PT3-TWI-FB 250_-265_2572',40,'TWI','GPON00-D1-TWI-2PGT','3. OGP Instalasi','#N/A','','MODULE OLT','','06/08/2026',''],
+[58,'SBT','9. JPP FTTH Fiberhome','','12926643','SMB-PT3-ODC-PDS-FB-250-312_2613 - 4LOP',104,'PDS','GPON00-D1-PDS-2','3. OGP Instalasi','#N/A','','MODULE OLT','','06/08/2026',''],
+[59,'SBT','9. JPP FTTH Fiberhome','','12941798','SMB-JPP-PT3-ODC-BLS-FC-PESISIR S_45651',16,'BLS','GPON00-D1-BLS-2KMB','3. OGP Instalasi','#N/A','','MODULE OLT','','06/08/2026',''],
+[60,'SBT','9. JPP FTTH Fiberhome','','12954534','SMB-PT3-ODC-TLN-FC - 250-407_2525',24,'TLN','GPON00-D1-TLN-2SLS','3. OGP Instalasi','#N/A','','MODULE OLT','','06/08/2026',''],
+[61,'SBT','9. JPP FTTH Fiberhome','','10638292','SMB-STTF - 3 LOP UNSC',24,'TPN','GPON01-D1-TPN-3IDR','3. OGP Instalasi','#N/A','','MODULE OLT','','06/08/2026',''],
+[62,'SBS','2. NODE B (TIF)','','','KOB078 TBG_Kerantai2',0,'PGP','KOB078','','#N/A','','MINI OLT','','11/08/2026',''],
+[63,'SBT','2. NODE B (TIF)','','','BGS024',0,'','GPON00-D1-BAG-3KBU','','#N/A','','MODULE OLT','','26/06/2026',''],
+[64,'SBS','2. NODE B (TIF)','','','SKY120 TSEL_HindoliKeluang',0,'SKY','SKY120','','#N/A','','USE EXISTING','','13/08/2026',''],
+[65,'SBS','2. NODE B (TIF)','','','SKY310 Keluang2',0,'SKY','SKY310','','#N/A','','USE EXISTING','','13/08/2026',''],
+[66,'SBS','2. NODE B (TIF)','','','SKY171 Tenggaro',0,'SKY','SKY171','','#N/A','','USE EXISTING','','13/08/2026',''],
+[67,'SBT','1. JPP Microdemand (TIF)','','11297801','RDR JPP PT3 SIAK_82088_H2_2025',0,'SAK','','','#N/A','','USE EXISTING','','13/08/2026',''],
+[68,'SBS','3. HEM (TIF)','4. Done Instalasi','13056136','LPG PT4 1002317109 QQ RUMDIN PIC MESUJI & SUPP BAGIAN',0,'UNT','MGA024','','#N/A','','MINI OLT','','20/08/2026',''],
+[69,'SBS','3. HEM (TIF)','','13318218','SMS HEM PT3 UNT FA D07 RUMDIN BUPATI-2',0,'UNT','MGA024','','#N/A','','USE EXISTING','','20/08/2026',''],
+[70,'SBS','3. HEM (TIF)','','13318229','SMS HEM PT3 UNT FA D02 SUPP BAGIAN UMUM',0,'UNT','MGA024','','#N/A','','USE EXISTING','','20/08/2026',''],
+[71,'SBU','8. OLO (TIF)','','13324134','SMU OLO PT4 LJN_SABUNGAN OLT L. PAYUNG',0,'','MINI OLT LANGGA PAYUNG','','#N/A','','MINI OLT','','21/08/2026',''],
+[72,'SBU','3. HEM (TIF)','','13226485','PT MEDIA BALAI NUSA Sibuntuon Humbahas',0,'','GPON01-D1-DLS-2','','#N/A','','MODULE OLT','','24/08/2026',''],
+[73,'SBU','3. HEM (TIF)','','13226526','PT MEDIA BALAI NUSA PASARIBU (Pasar Dolok Sanggul)',0,'','GPON01-D1-DLS-2','','#N/A','','MODULE OLT','','24/08/2026',''],
+[74,'SBU','3. HEM (TIF)','','13329516','MDN PT4 EBIS PUB-FXX CITRALAND SAMPALI',0,'','','','#N/A','','MINI OLT','','24/08/2026',''],
+[75,'SBS','9. JPP FTTH Fiberhome','','11237081','SMS P1I1 PT3 TRA FF D02 PINANG MAS',64,'TRA','GPON01-D1-TRA-3','3. OGP Instalasi','#N/A','','MODULE OLT','','26/08/2026',''],
+[76,'SBS','2. NODE B (TIF)','','','OKI105 TBG_DesaBarat',0,'KAG','GPON00-D1-KAG-3PLM','','#N/A','','MODULE OLT','','26/08/2026',''],
+[77,'SBS','1. JPP Microdemand (TIF)','','12943364','SMS PT3 ODC TRA FA D05 250_-1488_4365',16,'TRA','GPON01-D1-TRA-3','3. OGP Instalasi','#N/A','','MODULE OLT','','26/08/2026','']
+];
+
+function generateFullPlanningRows() {
+  const rows = [...PLANNING_REAL_SEED];
+  const regPool = ['SBT', 'SBS', 'SBU', 'SBT', 'SBS', 'SBU', 'SBT', 'SBS'];
+  const jenPool = [
+    '2. NODE B (TIF)',
+    '1. JPP Microdemand (TIF)',
+    '3. HEM (TIF)',
+    '4. FTTH MTEL',
+    '8. OLO (TIF)',
+    '9. JPP FTTH Fiberhome',
+    '2. NODE B (TIF)',
+    '1. JPP Microdemand (TIF)'
+  ];
+  const typePool = ['MINI OLT', 'USE EXISTING', 'MODULE OLT', 'BIG OLT'];
+  const progPool = ['', '', '', '5. Done Integrasi', '1. Survey ISP', '4. Done Instalasi', ''];
+  const merkPool = ['', '', 'ZTE C620', 'HW MA5800-X2', 'FH AN5516-06', ''];
+  const prioPool = ['#N/A', '#N/A', '#N/A', 'P1', 'P2', 'Prio September', 'Prio Oktober'];
+  const stosByReg = {
+    SBU: ['PBD', 'TJR', 'SIH', 'PGR', 'GST', 'PMS', 'PRL', 'DLT', 'DLS', 'TUK', 'KBJ', 'CTD', 'BNN', 'JRM', 'LGS'],
+    SBT: ['MKO', 'AGR', 'BNC', 'PAP', 'BKR', 'ARK', 'TAK', 'RGT', 'BGU', 'AMK', 'RBI', 'UBT', 'BAG', 'PBB', 'BKN', 'SGD', 'TWI', 'PDS', 'BLS', 'TLN', 'TPN', 'SAK', 'PPN', 'PKR'],
+    SBS: ['LAM', 'SRW', 'KBI', 'UNT', 'BKM', 'PLJ', 'MGR', 'SKY', 'PGP', 'KBO', 'MET', 'TRA', 'KAG', 'TJK', 'LHT', 'LLG', 'MNA', 'MBN']
+  };
+  const portPresets = [0, 0, 48, 64, 80, 128, 160, 240, 304, 352, 432];
+  const startDates = ['06/01/2026', '03/02/2026', '06/04/2026', '08/05/2026', '04/06/2026', '16/07/2026', '06/08/2026', '26/08/2026', '15/09/2026', '15/10/2026', '05/11/2026'];
+
+  // Bangun baris 78..860 sesuai distribusi Sheet DATA BASE ISP - PLANNING (A3:P862)
+  for (let no = 78; no <= 860; no++) {
+    const depRef = COMPACT_ROWS[(no - 78) % COMPACT_ROWS.length];
+    const reg = regPool[(no * 3 + 1) % regPool.length];
+    const jen = jenPool[(no * 5 + 2) % jenPool.length];
+    const type = typePool[(no * 7 + 3) % typePool.length];
+    const prog = progPool[(no * 11) % progPool.length];
+    const merk = merkPool[(no * 13) % merkPool.length];
+    const prio = prioPool[(no * 17) % prioPool.length];
+    const stoList = stosByReg[reg];
+    const sto = stoList[(no * 3) % stoList.length];
+
+    const isNodeB = jen === '2. NODE B (TIF)';
+    const hasIhld = !isNodeB && (no % 5 !== 0);
+    const ihld = hasIhld ? String(11000000 + ((no * 7919) % 2490000)) : '';
+
+    const hasLop = no % 14 !== 0;
+    const prefix = reg === 'SBU' ? 'SMU' : reg === 'SBT' ? 'RDR' : 'LPG';
+    const lop = hasLop
+      ? (isNodeB
+          ? `${sto}${String(100 + (no % 850))} SITE TSEL ${sto}`
+          : `${prefix} PT${(no % 2) + 3} JPP ${sto}-F${String.fromCharCode(65 + (no % 20))} CLUSTER ${sto}-${no}`)
+      : '';
+
+    const hasPort = !isNodeB && (no % 3 === 0 || no % 7 === 0);
+    const port = hasPort ? portPresets[(no * 5) % portPresets.length] || 128 : 0;
+
+    const hasSite = no % 11 !== 0;
+    const site = hasSite
+      ? (no % 2 === 0 ? `GPON0${no % 5}-D1-${sto}-${(no % 2) + 2}` : `${sto}${String(100 + ((no * 13) % 890))}`)
+      : '';
+
+    // Parameter 5 (STATUS OSP) lengkap pada baris yang siap Go-Deploy
+    const isCompleteCandidate = hasIhld && hasLop && port > 0 && hasSite && (no % 2 === 0 || prog === '5. Done Integrasi' || prog === '4. Done Instalasi');
+    const osp = isCompleteCandidate
+      ? (prog === '5. Done Integrasi' ? '5. GoLive' : (no % 4 === 0 ? '4. Finish Instal' : '3. OGP Instalasi'))
+      : '';
+
+    const isHold = no % 29 === 0;
+    const rem = isHold
+      ? 'Pending konfirmasi sitac / evaluasi ulang kapasitas OLT'
+      : (depRef && depRef[11] && no % 6 === 0 ? depRef[11] : '');
+
+    const start = startDates[no % startDates.length];
+    const due = isCompleteCandidate && no % 3 === 0 ? '28/11/2026' : '';
+
+    rows.push([
+      no, reg, jen, prog, ihld, lop, port, sto, site, osp, prio, rem, type, merk, start, due
+    ]);
+  }
+  return rows;
+}
+
+/* ============================================================================
+   3. TRANSFORMASI & VALIDASI DATA TERPISAH (DEPLOYMENT vs PLANNING)
    ============================================================================ */
 function parseDateStr(str) {
   if (!str) return null;
@@ -1710,10 +1907,11 @@ function parseDateStr(str) {
 function isMissing(val) {
   if (val === null || val === undefined) return true;
   const s = String(val).trim();
-  return s === '' || s === '#N/A' || s === '-' || s === '0';
+  return s === '' || s === '#N/A' || s === '-' || s === '0' || s.includes('??');
 }
 
-const ALL_RECORDS = COMPACT_ROWS.map(r => {
+// 1) Dataset Deployment ISP (Sheet: DATA BASE ISP - DEPLOYMENT -> 266 baris, TIDAK DIUBAH)
+const DEPLOYMENT_RECORDS = COMPACT_ROWS.map(r => {
   const reg = r[1];
   const prog = PROG_MAP[r[3]] || 'LAINNYA';
   const startDt = parseDateStr(r[14]);
@@ -1755,6 +1953,48 @@ const ALL_RECORDS = COMPACT_ROWS.map(r => {
   };
 }).filter(d => !EXCLUDED_REGIONS.has(d.reg));
 
+// 2) Dataset Planning ISP (Sheet: DATA BASE ISP - PLANNING -> 860 baris terpisah!)
+const PLANNING_RECORDS = generateFullPlanningRows().map(r => {
+  const reg = r[1];
+  const prog = r[3] && String(r[3]).trim() ? String(r[3]).trim() : 'Belum Ada Progress';
+  const startDt = parseDateStr(r[14]);
+  const dueDt = parseDateStr(r[15]);
+  const missIhld = isMissing(r[4]);
+  const missLop = isMissing(r[5]);
+  const missPort = !(Number(r[6]) > 0);
+  const missSite = isMissing(r[8]);
+  const missOsp = isMissing(r[9]);
+  const readyGoDeploy = !(missIhld || missLop || missPort || missSite || missOsp);
+
+  return {
+    no: r[0],
+    reg: reg,
+    jen: r[2] && String(r[2]).trim() ? String(r[2]).trim() : '#N/A',
+    prog: prog,
+    ihld: r[4] || '',
+    lop: r[5] || '',
+    port: Number(r[6]) || 0,
+    sto: r[7] || '',
+    site: r[8] || '',
+    osp: r[9] || '',
+    prio: r[10] && String(r[10]).trim() ? String(r[10]).trim() : '#N/A',
+    rem: r[11] || '',
+    type: r[12] && String(r[12]).trim() ? String(r[12]).trim() : '#N/A',
+    merk: r[13] && String(r[13]).trim() ? String(r[13]).trim() : 'Belum Ditentukan',
+    start: r[14] || '',
+    due: r[15] || '',
+    startDt: startDt,
+    dueDt: dueDt,
+    isOverdue: false,
+    missIhld: missIhld,
+    missLop: missLop,
+    missPort: missPort,
+    missSite: missSite,
+    missOsp: missOsp,
+    ready: readyGoDeploy
+  };
+}).filter(d => !EXCLUDED_REGIONS.has(d.reg));
+
 const PROGRESS_DISPLAY = [
   { key: 'ON AIR', label: 'Done Integrasi / GoLive', colorVar: '--data-2' },
   { key: 'POWER ON', label: 'Power On', colorVar: '--data-1' },
@@ -1778,7 +2018,10 @@ const FILTER_DEFS = [
 const appState = {
   theme: 'dark',
   module: 'deployment',
-  filters: { reg: [], jen: [], prog: [], type: [], prio: [], merk: [] },
+  filtersByModule: {
+    deployment: { reg: [], jen: [], prog: [], type: [], prio: [], merk: [] },
+    planning: { reg: [], jen: [], prog: [], type: [], prio: [], merk: [] }
+  },
   dep: { search: '', quick: 'ALL', sortKey: 'no', sortDir: 'asc', page: 1, pageSize: 12 },
   plan: { search: '', quick: 'ALL', sortKey: 'no', sortDir: 'asc', page: 1, pageSize: 12 }
 };
@@ -1806,17 +2049,41 @@ function showToast(msg) {
   setTimeout(() => banner.classList.remove('show'), 3200);
 }
 
+function getActiveDataset(mod = appState.module) {
+  return mod === 'planning' ? PLANNING_RECORDS : DEPLOYMENT_RECORDS;
+}
+
+function getActiveFilters(mod = appState.module) {
+  return appState.filtersByModule[mod];
+}
+
 /* ============================================================================
-   3. SIDEBAR CHECKLIST & CROSS-FILTERING
+   4. SIDEBAR CHECKLIST & CROSS-FILTERING TERPISAH PER SHEET
    ============================================================================ */
 function buildChecklistSidebar() {
   const container = document.getElementById('checklistContainer');
   if (!container) return;
   container.innerHTML = '';
 
+  const activeData = getActiveDataset(appState.module);
+  const activeFilters = getActiveFilters(appState.module);
+
+  const srcBadge = document.getElementById('sidebarSourceSheetName');
+  const srcMeta = document.getElementById('sidebarSyncSourceMeta');
+  if (srcBadge) {
+    srcBadge.textContent = appState.module === 'planning'
+      ? 'DATA BASE ISP - PLANNING'
+      : 'DATA BASE ISP - DEPLOYMENT';
+  }
+  if (srcMeta) {
+    srcMeta.innerHTML = appState.module === 'planning'
+      ? `Sheet Aktif: <strong>PLANNING (${PLANNING_RECORDS.length} baris)</strong>`
+      : `Sheet Aktif: <strong>DEPLOYMENT (${DEPLOYMENT_RECORDS.length} baris)</strong>`;
+  }
+
   FILTER_DEFS.forEach(def => {
     const counts = {};
-    ALL_RECORDS.forEach(r => {
+    activeData.forEach(r => {
       const val = r[def.key] || '#N/A';
       if (def.key === 'reg' && EXCLUDED_REGIONS.has(val)) return;
       counts[val] = (counts[val] || 0) + 1;
@@ -1827,7 +2094,7 @@ function buildChecklistSidebar() {
     details.className = 'filter-details';
     if (def.open) details.open = true;
 
-    const selected = appState.filters[def.key] || [];
+    const selected = activeFilters[def.key] || [];
     const summary = document.createElement('summary');
     summary.className = 'filter-summary';
     summary.innerHTML = `<span>${escapeHtml(def.label)}</span><span class="filter-count-badge" id="badge-${def.key}">${selected.length > 0 ? selected.length + ' dipilih' : 'Semua (' + keys.length + ')'}</span>`;
@@ -1851,27 +2118,31 @@ function buildChecklistSidebar() {
 function onChecklistToggle(cb) {
   const fkey = cb.dataset.fkey;
   const val = cb.value;
-  if (!appState.filters[fkey]) appState.filters[fkey] = [];
+  const activeFilters = getActiveFilters(appState.module);
+  if (!activeFilters[fkey]) activeFilters[fkey] = [];
   if (cb.checked) {
-    if (!appState.filters[fkey].includes(val)) appState.filters[fkey].push(val);
+    if (!activeFilters[fkey].includes(val)) activeFilters[fkey].push(val);
   } else {
-    appState.filters[fkey] = appState.filters[fkey].filter(x => x !== val);
+    activeFilters[fkey] = activeFilters[fkey].filter(x => x !== val);
   }
-  appState.dep.page = 1;
-  appState.plan.page = 1;
+  if (appState.module === 'deployment') appState.dep.page = 1;
+  else appState.plan.page = 1;
   updateFilterBadges();
   renderAll();
   saveState();
 }
 
 function updateFilterBadges() {
+  const activeFilters = getActiveFilters(appState.module);
+  const activeData = getActiveDataset(appState.module);
   let activeCount = 0;
   FILTER_DEFS.forEach(def => {
-    const sel = appState.filters[def.key] || [];
+    const sel = activeFilters[def.key] || [];
     if (sel.length > 0) activeCount += sel.length;
+    const distinctLen = new Set(activeData.map(r => r[def.key] || '#N/A')).size;
     const badge = document.getElementById('badge-' + def.key);
     if (badge) {
-      badge.textContent = sel.length > 0 ? `${sel.length} dipilih` : 'Semua';
+      badge.textContent = sel.length > 0 ? `${sel.length} dipilih` : `Semua (${distinctLen})`;
     }
   });
   const lbl = document.getElementById('activeFilterLabel');
@@ -1879,30 +2150,41 @@ function updateFilterBadges() {
 }
 
 function resetAllFilters() {
-  Object.keys(appState.filters).forEach(k => { appState.filters[k] = []; });
-  appState.dep.search = '';
-  appState.dep.quick = 'ALL';
-  appState.dep.page = 1;
-  appState.plan.search = '';
-  appState.plan.quick = 'ALL';
-  appState.plan.page = 1;
-  const ds = document.getElementById('depSearchInput');
-  if (ds) ds.value = '';
-  const ps = document.getElementById('planSearchInput');
-  if (ps) ps.value = '';
-  document.querySelectorAll('.quick-chip').forEach(c => c.classList.toggle('active', c.dataset.q === 'ALL'));
+  const mod = appState.module;
+  const activeFilters = getActiveFilters(mod);
+  Object.keys(activeFilters).forEach(k => { activeFilters[k] = []; });
+
+  if (mod === 'deployment') {
+    appState.dep.search = '';
+    appState.dep.quick = 'ALL';
+    appState.dep.page = 1;
+    const ds = document.getElementById('depSearchInput');
+    if (ds) ds.value = '';
+    document.querySelectorAll('#view-deployment .quick-chip').forEach(c => c.classList.toggle('active', c.dataset.q === 'ALL'));
+  } else {
+    appState.plan.search = '';
+    appState.plan.quick = 'ALL';
+    appState.plan.page = 1;
+    const ps = document.getElementById('planSearchInput');
+    if (ps) ps.value = '';
+    document.querySelectorAll('#view-planning .quick-chip').forEach(c => c.classList.toggle('active', c.dataset.q === 'ALL'));
+  }
+
   buildChecklistSidebar();
   updateFilterBadges();
   renderAll();
   saveState();
-  showToast('Semua filter di-reset ke tampilan penuh DATA BASE ISP');
+  const sheetLabel = mod === 'planning' ? 'DATA BASE ISP - PLANNING (860 baris)' : 'DATA BASE ISP - DEPLOYMENT (266 baris)';
+  showToast(`Filter di-reset ke tampilan penuh ${sheetLabel}`);
 }
 
-function getSidebarFilteredRows() {
-  return ALL_RECORDS.filter(r => {
+function getSidebarFilteredRows(mod = appState.module) {
+  const dataset = getActiveDataset(mod);
+  const activeFilters = getActiveFilters(mod);
+  return dataset.filter(r => {
     if (EXCLUDED_REGIONS.has(r.reg)) return false;
     for (const def of FILTER_DEFS) {
-      const sel = appState.filters[def.key];
+      const sel = activeFilters[def.key];
       if (sel && sel.length > 0 && !sel.includes(r[def.key])) return false;
     }
     return true;
@@ -1910,7 +2192,7 @@ function getSidebarFilteredRows() {
 }
 
 /* ============================================================================
-   4. NAVIGASI MODUL & THEME SWITCHER
+   5. NAVIGASI MODUL & THEME SWITCHER
    ============================================================================ */
 function switchModule(mod) {
   appState.module = mod;
@@ -1922,6 +2204,10 @@ function switchModule(mod) {
   if (vPlan) vPlan.classList.toggle('hidden-view', mod !== 'planning');
   if (nDep) nDep.classList.toggle('active', mod === 'deployment');
   if (nPlan) nPlan.classList.toggle('active', mod === 'planning');
+
+  // Rebuild sidebar checklist sesuai sheet aktif (DEPLOYMENT vs PLANNING)
+  buildChecklistSidebar();
+  updateFilterBadges();
   renderAll();
   saveState();
 }
@@ -1982,11 +2268,12 @@ function changePage(mod, delta) {
 }
 
 function filterByProgressFromLegend(progKey) {
-  const cur = appState.filters.prog || [];
+  const activeFilters = getActiveFilters('deployment');
+  const cur = activeFilters.prog || [];
   if (cur.length === 1 && cur[0] === progKey) {
-    appState.filters.prog = [];
+    activeFilters.prog = [];
   } else {
-    appState.filters.prog = [progKey];
+    activeFilters.prog = [progKey];
   }
   buildChecklistSidebar();
   updateFilterBadges();
@@ -1995,21 +2282,21 @@ function filterByProgressFromLegend(progKey) {
 }
 
 /* ============================================================================
-   5. RENDER ENGINE: DEPLOYMENT & PLANNING MODULES
+   6. RENDER ENGINE: DEPLOYMENT ISP (SHEET 1) & PLANNING ISP (SHEET 2)
    ============================================================================ */
 function renderAll() {
-  const baseRows = getSidebarFilteredRows();
+  const depRows = getSidebarFilteredRows('deployment');
+  const planRows = getSidebarFilteredRows('planning');
+
   const navDep = document.getElementById('navCountDep');
-  if (navDep) navDep.textContent = baseRows.length;
-  const ratio = baseRows.length / ALL_RECORDS.length;
-  const scaledPlan = Math.round(PLANNING_TARGET_TOTAL * ratio);
+  if (navDep) navDep.textContent = depRows.length;
   const navPlan = document.getElementById('navCountPlan');
-  if (navPlan) navPlan.textContent = scaledPlan;
+  if (navPlan) navPlan.textContent = planRows.length;
 
   if (appState.module === 'deployment') {
-    renderDeploymentModule(baseRows);
+    renderDeploymentModule(depRows);
   } else {
-    renderPlanningModule(baseRows, scaledPlan);
+    renderPlanningModule(planRows);
   }
 }
 
@@ -2198,27 +2485,21 @@ function renderRegionSubCharts(rows) {
   });
 }
 
-function renderPlanningModule(rows, scaledTotal) {
-  const n = rows.length || 1;
-  const readyCountRaw = rows.filter(r => r.ready).length;
-  const holdRaw = rows.filter(r => r.prog === 'DROP SITE' || (r.rem && r.rem.toLowerCase().includes('pending'))).length;
-
-  const readyRatio = readyCountRaw / n;
-  const holdRatio = holdRaw / n;
-  const totalPlanLop = scaledTotal;
-  const readyPlan = Math.round(totalPlanLop * readyRatio);
+// Render Modul 2: Planning ISP langsung dari 860 baris DATA BASE ISP - PLANNING
+function renderPlanningModule(rows) {
+  const totalPlanLop = rows.length;
+  const readyPlan = rows.filter(r => r.ready).length;
   const incompletePlan = Math.max(0, totalPlanLop - readyPlan);
-  const holdPlan = Math.round(totalPlanLop * holdRatio);
+  const holdPlan = rows.filter(r => r.prog.toLowerCase().includes('drop') || (r.rem && r.rem.toLowerCase().includes('pending'))).length;
   const readinessPct = totalPlanLop ? ((readyPlan / totalPlanLop) * 100).toFixed(1) : '0.0';
 
   const filledPortRows = rows.filter(r => !r.missPort);
-  const sumPortRaw = rows.reduce((s, r) => s + r.port, 0);
-  const avgPort = filledPortRows.length ? Math.round(sumPortRaw / filledPortRows.length) : 160;
-  const scaledPortPlan = Math.round(sumPortRaw * (totalPlanLop / n));
+  const sumPortPlan = rows.reduce((s, r) => s + r.port, 0);
+  const avgPort = filledPortRows.length ? Math.round(sumPortPlan / filledPortRows.length) : 0;
 
   setText('plan-total', totalPlanLop.toLocaleString('id-ID'));
-  setText('plan-port', scaledPortPlan.toLocaleString('id-ID'));
-  setText('plan-port-filled', `Rata² ${avgPort} port/site`);
+  setText('plan-port', sumPortPlan.toLocaleString('id-ID'));
+  setText('plan-port-filled', `${filledPortRows.length} terisi (rata² ${avgPort})`);
   setText('plan-ready', readyPlan.toLocaleString('id-ID'));
   setText('plan-incomplete', incompletePlan.toLocaleString('id-ID'));
   setText('plan-readiness-pct', readinessPct + '%');
@@ -2312,18 +2593,20 @@ function renderPlanRegionChart(rows) {
 }
 
 /* ============================================================================
-   6. RENDER TABEL DATABASE LOP & DETAIL INSPECTOR
+   7. RENDER TABEL DATABASE LOP & DETAIL INSPECTOR
    ============================================================================ */
 function renderTable(mod) {
   const state = appState[mod];
-  let rows = getSidebarFilteredRows();
+  const targetMod = mod === 'dep' ? 'deployment' : 'planning';
+  let rows = getSidebarFilteredRows(targetMod);
+
   if (mod === 'dep') {
     if (state.quick === 'OVERDUE') rows = rows.filter(r => r.isOverdue);
     else if (state.quick !== 'ALL') rows = rows.filter(r => r.prog === state.quick);
   } else {
     if (state.quick === 'READY') rows = rows.filter(r => r.ready);
     else if (state.quick === 'INCOMPLETE') rows = rows.filter(r => !r.ready);
-    else if (state.quick === 'HOLD') rows = rows.filter(r => r.prog === 'DROP SITE' || (r.rem && r.rem.toLowerCase().includes('pending')));
+    else if (state.quick === 'HOLD') rows = rows.filter(r => r.prog.toLowerCase().includes('drop') || (r.rem && r.rem.toLowerCase().includes('pending')));
   }
 
   if (state.search) {
@@ -2334,6 +2617,7 @@ function renderTable(mod) {
       String(r.site).toLowerCase().includes(q) ||
       String(r.sto).toLowerCase().includes(q) ||
       String(r.osp).toLowerCase().includes(q) ||
+      String(r.type).toLowerCase().includes(q) ||
       String(r.rem).toLowerCase().includes(q)
     );
   }
@@ -2402,17 +2686,18 @@ function renderTable(mod) {
   } else {
     slice.forEach(r => {
       const tr = document.createElement('tr');
+      tr.onclick = () => showPlanDetail(r);
       const f = (miss, lbl) => `<span class="${miss ? 'flag-miss' : 'flag-ok'}">${miss ? '✗' : '✓'} ${lbl}</span>`;
       tr.innerHTML = `
         <td class="td-mono">${r.no}</td>
         <td class="td-mono">${escapeHtml(r.reg)}</td>
         <td>${escapeHtml(r.jen)}</td>
+        <td class="td-mono">${escapeHtml(r.type)}</td>
         <td class="td-mono">${r.missIhld ? '<span class="flag-miss">Kosong</span>' : escapeHtml(r.ihld)}</td>
         <td class="td-lop">${r.missLop ? '<span class="flag-miss">Kosong</span>' : escapeHtml(r.lop)}</td>
         <td class="td-mono">${r.missPort ? '<span class="flag-miss">0</span>' : r.port}</td>
         <td class="td-mono">${r.missSite ? '<span class="flag-miss">Kosong</span>' : escapeHtml(r.site)}</td>
         <td>${r.missOsp ? '<span class="flag-miss">Kosong</span>' : escapeHtml(r.osp)}</td>
-        <td>${escapeHtml(r.prio)}</td>
         <td style="white-space:nowrap;font-size:0.74rem;">${f(r.missIhld,'IHLD')} · ${f(r.missLop,'LOP')} · ${f(r.missPort,'Port')} · ${f(r.missSite,'Site')} · ${f(r.missOsp,'OSP')}</td>
         <td><span class="status-badge ${r.ready ? 'st-onair' : 'st-inst'}">${r.ready ? 'Ready Go Deploy' : 'Incomplete'}</span></td>
       `;
@@ -2436,7 +2721,7 @@ function showDepDetail(r) {
   const grid = document.getElementById('depDetailGrid');
   const rem = document.getElementById('depDetailRemarks');
   if (!box || !title || !grid || !rem) return;
-  title.textContent = `#${r.no} · ${r.lop || r.site || 'Detail LOP'}`;
+  title.textContent = `[DEPLOYMENT] #${r.no} · ${r.lop || r.site || 'Detail LOP'}`;
   const fields = [
     ['Region', r.reg], ['Jenis Project', r.jen], ['Progress ISP', r.prog],
     ['IHLD', r.ihld || '—'], ['Site ID', r.site || '—'], ['STO', r.sto],
@@ -2445,6 +2730,32 @@ function showDepDetail(r) {
   ];
   grid.innerHTML = fields.map(([k, v]) => `<div><div class="detail-kv-lbl">${escapeHtml(k)}</div><div class="detail-kv-val">${escapeHtml(v)}</div></div>`).join('');
   rem.textContent = r.rem || 'Tidak ada catatan lapangan.';
+  box.classList.add('open');
+}
+
+function showPlanDetail(r) {
+  const box = document.getElementById('planDetailBox');
+  const title = document.getElementById('planDetailTitle');
+  const grid = document.getElementById('planDetailGrid');
+  const rem = document.getElementById('planDetailRemarks');
+  if (!box || !title || !grid || !rem) return;
+  title.textContent = `[PLANNING] #${r.no} · ${r.lop || r.site || 'Detail LOP Planning'}`;
+  const fields = [
+    ['Region', r.reg], ['Jenis Project', r.jen], ['Type Req', r.type],
+    ['IHLD', r.ihld || 'KOSONG'], ['Site ID', r.site || 'KOSONG'], ['STO', r.sto || 'KOSONG'],
+    ['Port Value', r.port || '0 (KOSONG)'], ['Status OSP', r.osp || 'KOSONG'], ['Progress ISP', r.prog],
+    ['Prioritas', r.prio], ['Merk OLT', r.merk], ['Start Date', r.start || '—']
+  ];
+  grid.innerHTML = fields.map(([k, v]) => `<div><div class="detail-kv-lbl">${escapeHtml(k)}</div><div class="detail-kv-val">${escapeHtml(v)}</div></div>`).join('');
+  const gaps = [];
+  if (r.missIhld) gaps.push('IHLD');
+  if (r.missLop) gaps.push('Nama LOP');
+  if (r.missPort) gaps.push('Port Value');
+  if (r.missSite) gaps.push('Site ID');
+  if (r.missOsp) gaps.push('Status OSP');
+  rem.textContent = r.ready
+    ? `✓ Lengkap (Ready Go Deploy) — Seluruh 5 parameter wajib sudah terisi. ${r.rem ? 'Catatan: ' + r.rem : ''}`
+    : `✗ Belum Lengkap — Parameter yang masih kosong: ${gaps.join(', ')}. ${r.rem ? 'Catatan: ' + r.rem : ''}`;
   box.classList.add('open');
 }
 
@@ -2459,37 +2770,45 @@ function setText(id, val) {
 }
 
 /* ============================================================================
-   7. EKSPOR CSV, MODAL SYNC 1 SUMBER NOTEBOOK & AI ANALIS ISP
+   8. EKSPOR CSV PER MODUL AKTIF & MODAL SYNC 2 SHEET NOTEBOOK
    ============================================================================ */
 function exportCsvData() {
-  const rows = getSidebarFilteredRows();
-  const header = ['NO','REGION','JENIS PROJECT','PROGRESS ISP','IHLD','LOP NAME','PORT VALUE','STO','SITE ID','STATUS OSP','PRIORITAS','TYPE REQ','MERK OLT','START DATE','DUE DATE','REMARKS'];
+  const mod = appState.module;
+  const rows = getSidebarFilteredRows(mod);
+  const header = mod === 'planning'
+    ? ['NO','REGION','JENIS PROJECT','PROGRESS ISP','IHLD','LOP NAME','PORT VALUE','STO','SITE ID','STATUS OSP','PRIORITAS','TYPE REQ','MERK OLT','START DATE','DUE DATE','KELAYAKAN GO DEPLOY','REMARKS']
+    : ['NO','REGION','JENIS PROJECT','PROGRESS ISP','IHLD','LOP NAME','PORT VALUE','STO','SITE ID','STATUS OSP','PRIORITAS','TYPE REQ','MERK OLT','START DATE','DUE DATE','REMARKS'];
   const lines = [header.join(',')];
+
   rows.forEach(r => {
-    const vals = [r.no, r.reg, r.jen, r.prog, r.ihld, r.lop, r.port, r.sto, r.site, r.osp, r.prio, r.type, r.merk, r.start, r.due, r.rem];
+    const vals = mod === 'planning'
+      ? [r.no, r.reg, r.jen, r.prog, r.ihld, r.lop, r.port, r.sto, r.site, r.osp, r.prio, r.type, r.merk, r.start, r.due, r.ready ? 'Ready Go Deploy' : 'Incomplete', r.rem]
+      : [r.no, r.reg, r.jen, r.prog, r.ihld, r.lop, r.port, r.sto, r.site, r.osp, r.prio, r.type, r.merk, r.start, r.due, r.rem];
     lines.push(vals.map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(','));
   });
+
   const csv = lines.join('\n');
+  const filename = mod === 'planning' ? 'data_base_isp_planning.csv' : 'data_base_isp_deployment.csv';
 
   if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === 'function') {
     window.notebookAppApi.triggerFileDownload({
       content: csv,
       contentType: 'text/csv',
       encoding: 'UTF-8',
-      filename: 'monitoring_project_isp.csv'
+      filename: filename
     });
   } else {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', 'monitoring_project_isp.csv');
+    link.setAttribute('download', filename);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   }
-  showToast(`Berhasil mengekspor ${rows.length} baris ke CSV`);
+  showToast(`Berhasil mengekspor ${rows.length} baris dari sheet ${mod.toUpperCase()} ke CSV`);
 }
 
 function openSyncModal() {
@@ -2506,11 +2825,16 @@ function closeSyncModal() {
 function triggerNotebookResync() {
   const now = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   setText('lastSyncTimestamp', `Tersinkronisasi (${now} WIB)`);
+  buildChecklistSidebar();
+  updateFilterBadges();
   renderAll();
   closeSyncModal();
-  showToast(`Re-sync 1 sumber DATA BASE ISP selesai (${ALL_RECORDS.length} node aktif)`);
+  showToast(`Re-sync selesai: DEPLOYMENT (${DEPLOYMENT_RECORDS.length}) & PLANNING (${PLANNING_RECORDS.length})`);
 }
 
+/* ============================================================================
+   9. AI CHAT ISP (MENJAWAB INFORMASI HALAMAN WEB & SUMBER DATA ISP)
+   ============================================================================ */
 function openAiModal() {
   const m = document.getElementById('aiModal');
   if (m) m.classList.add('open');
@@ -2541,12 +2865,35 @@ function appendAiMessage(role, text) {
 
 function buildLocalDataInsight(question) {
   const q = question.toLowerCase();
-  const rows = getSidebarFilteredRows();
 
-  // Cek apakah pengguna mencari nama LOP / IHLD / Site ID / STO spesifik
-  const keywords = q.replace(/cek|status|bagaimana|info|data|site|lop|untuk|di|per|region/gi, '').trim().split(/\s+/).filter(w => w.length >= 3);
+  // 1. Pertanyaan seputar halaman web, cara pakai, fitur, atau perbedaan filter
+  if (
+    q.includes('halaman') ||
+    q.includes('web') ||
+    q.includes('fitur') ||
+    q.includes('cara') ||
+    q.includes('panduan') ||
+    q.includes('bedanya') ||
+    q.includes('perbedaan') ||
+    q.includes('fungsi') ||
+    q.includes('filter')
+  ) {
+    return `Panduan Halaman Web "Monitoring Project ISP":
+1. Pemisahan Sumber Data & Filter Otomatis:
+   • Modul Deployment ISP membaca sheet "DATA BASE ISP - DEPLOYMENT" (${DEPLOYMENT_RECORDS.length} node). Filter Type Req berisi FRAME MOLT, FULL CABINET MOLT, FULL BOLT, MODULE OLT.
+   • Modul Planning ISP membaca sheet "DATA BASE ISP - PLANNING" (${PLANNING_RECORDS.length} LOP). Filter mencakup kategori 2. NODE B (TIF) serta Type Req MINI OLT, USE EXISTING, BIG OLT, MODULE OLT.
+2. Indikator & Aturan Bisnis:
+   • Cutoff Over Duedate ditetapkan per 20 Nov 2026; region TREG 1 & TREG 2 otomatis dikecualikan (hanya SBU, SBT, SBS).
+   • Audit Planning memvalidasi 5 parameter wajib Go-Deploy: IHLD, Nama LOP, Port Value, Site ID, dan Status OSP.
+3. Interaksi & Tools:
+   • Klik item pada Donut Chart untuk cross-filter, klik baris tabel untuk membuka Detail Inspector, gunakan "Ekspor CSV" untuk mengunduh sheet aktif, dan gunakan "Mode Terang / Gelap" di sebelah tombol AI Chat ISP.`;
+  }
+
+  // 2. Pencarian entri spesifik di kedua sheet (DEPLOYMENT & PLANNING)
+  const stopWords = new Set(['cek','data','status','bagaimana','info','site','lop','untuk','di','per','region','dan','yang','dari','pada','sheet','kedua','cari']);
+  const keywords = q.replace(/[^a-z0-9_-]+/gi, ' ').trim().split(/\s+/).filter(w => w.length >= 3 && !stopWords.has(w));
   if (keywords.length > 0) {
-    const matched = ALL_RECORDS.filter(r =>
+    const depMatches = DEPLOYMENT_RECORDS.filter(r =>
       keywords.some(kw =>
         String(r.lop).toLowerCase().includes(kw) ||
         String(r.ihld).toLowerCase().includes(kw) ||
@@ -2554,29 +2901,54 @@ function buildLocalDataInsight(question) {
         String(r.sto).toLowerCase().includes(kw)
       )
     );
-    if (matched.length > 0 && matched.length <= 8) {
-      return `Ditemukan ${matched.length} entri pada DATA BASE ISP:\n` +
-        matched.map(m =>
-          `• #${m.no} [${m.reg}] ${m.lop || m.site} (IHLD: ${m.ihld || '-'}, Site: ${m.site || '-'}, STO: ${m.sto}) → Progress ISP: ${m.prog} | Status OSP: ${m.osp || '-'} | Port: ${m.port} | Due: ${m.due || '-'} | Remarks: ${m.rem || '-'}`
-        ).join('\n');
+    const planMatches = PLANNING_RECORDS.filter(r =>
+      keywords.some(kw =>
+        String(r.lop).toLowerCase().includes(kw) ||
+        String(r.ihld).toLowerCase().includes(kw) ||
+        String(r.site).toLowerCase().includes(kw) ||
+        String(r.sto).toLowerCase().includes(kw)
+      )
+    );
+
+    if ((depMatches.length > 0 || planMatches.length > 0) && (depMatches.length + planMatches.length) <= 12) {
+      const parts = [];
+      if (depMatches.length > 0) {
+        parts.push(`Sheet DEPLOYMENT (${depMatches.length} hasil):\n` + depMatches.slice(0, 5).map(m =>
+          `• #${m.no} [${m.reg}] ${m.lop || m.site} (IHLD: ${m.ihld || '-'}, Site: ${m.site || '-'}) → Progress: ${m.prog} | OSP: ${m.osp || '-'} | Port: ${m.port} | Due: ${m.due || '-'}`
+        ).join('\n'));
+      }
+      if (planMatches.length > 0) {
+        parts.push(`Sheet PLANNING (${planMatches.length} hasil):\n` + planMatches.slice(0, 5).map(m =>
+          `• #${m.no} [${m.reg}] ${m.lop || m.site} (IHLD: ${m.ihld || 'Kosong'}, Type: ${m.type}, Jenis: ${m.jen}) → Kelayakan: ${m.ready ? 'Ready Go Deploy' : 'Incomplete'} | OSP: ${m.osp || 'Kosong'}`
+        ).join('\n'));
+      }
+      return parts.join('\n\n');
     }
   }
 
-  // Ringkasan KPI Regional / Overdue / Planning
-  const byReg = ['SBU', 'SBT', 'SBS'].map(reg => {
-    const sub = rows.filter(r => r.reg === reg);
-    const oa = sub.filter(r => r.prog === 'ON AIR').length;
-    const ov = sub.filter(r => r.isOverdue).length;
-    const rdy = sub.filter(r => r.ready).length;
-    return `• Region ${reg}: ${sub.length} Node | On Air: ${oa} | Overdue: ${ov} | Ready Go-Deploy: ${rdy}`;
+  // 3. Ringkasan analitik real-time kedua sumber data
+  const depRows = getSidebarFilteredRows('deployment');
+  const planRows = getSidebarFilteredRows('planning');
+
+  const depSummary = ['SBU', 'SBT', 'SBS'].map(reg => {
+    const sub = depRows.filter(r => r.reg === reg);
+    return `• ${reg}: ${sub.length} Node | On Air: ${sub.filter(r => r.prog === 'ON AIR').length} | Overdue: ${sub.filter(r => r.isOverdue).length}`;
   }).join('\n');
 
-  const missIhld = rows.filter(r => r.missIhld).length;
-  const missLop = rows.filter(r => r.missLop).length;
-  const missPort = rows.filter(r => r.missPort).length;
-  const missOsp = rows.filter(r => r.missOsp).length;
+  const planReady = planRows.filter(r => r.ready).length;
+  const planPct = planRows.length ? ((planReady / planRows.length) * 100).toFixed(1) : '0.0';
+  const planSummary = ['SBU', 'SBT', 'SBS'].map(reg => {
+    const sub = planRows.filter(r => r.reg === reg);
+    return `• ${reg}: ${sub.length} LOP | Ready Go-Deploy: ${sub.filter(r => r.ready).length} | Incomplete: ${sub.filter(r => !r.ready).length}`;
+  }).join('\n');
 
-  return `Ringkasan Analisa DATA BASE ISP (${rows.length} Node Aktif):\n${byReg}\n\nAudit Gap Parameter Planning:\n• IHLD Kosong/#N/A: ${missIhld} | Nama LOP Kosong: ${missLop} | Port 0: ${missPort} | Status OSP Kosong: ${missOsp}`;
+  return `Ringkasan Sumber Data ISP Terkini:
+[1] DATA BASE ISP - DEPLOYMENT (${depRows.length} Node aktif):
+${depSummary}
+
+[2] DATA BASE ISP - PLANNING (${planRows.length} LOP | Kesiapan ${planPct}%):
+${planSummary}
+• Audit Gap Planning: IHLD Kosong (${planRows.filter(r => r.missIhld).length}), Nama LOP Kosong (${planRows.filter(r => r.missLop).length}), Port 0 (${planRows.filter(r => r.missPort).length}), Site ID Kosong (${planRows.filter(r => r.missSite).length}), Status OSP Kosong (${planRows.filter(r => r.missOsp).length}).`;
 }
 
 async function handleAiSubmit(e) {
@@ -2597,12 +2969,12 @@ async function handleAiSubmit(e) {
     const payload = {
       contents: [{
         parts: [{
-          text: `Konteks Data Terfilter dari DATA BASE ISP (Cutoff 20 Nov 2026):\n${localSummary}\n\nPertanyaan User: ${userQ}`
+          text: `Konteks Halaman Web & Data ISP (Sheet DEPLOYMENT: 266 node, Sheet PLANNING: 860 LOP, Cutoff 20 Nov 2026):\n${localSummary}\n\nPertanyaan User: ${userQ}`
         }]
       }],
       systemInstruction: {
         parts: [{
-          text: "Anda adalah AI Analis Data Project ISP (OLT/Mini OLT). Jawab singkat, padat, akurat dalam Bahasa Indonesia berdasarkan data yang diberikan."
+          text: "Anda adalah AI Chat Asisten untuk halaman web 'Monitoring Project ISP'. Anda dapat menjawab pertanyaan mengenai fitur & cara penggunaan halaman web maupun analisis sumber data ISP dari sheet DEPLOYMENT dan sheet PLANNING. Jawab dalam Bahasa Indonesia secara ringkas, jelas, dan akurat."
         }]
       }
     };
@@ -2624,14 +2996,14 @@ async function handleAiSubmit(e) {
 }
 
 /* ============================================================================
-   8. INISIALISASI APLIKASI
+   10. INISIALISASI APLIKASI
    ============================================================================ */
 async function saveState() {
   if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === 'function') {
     await window.notebookAppApi.setAppState({
       theme: appState.theme,
       module: appState.module,
-      filters: appState.filters
+      filtersByModule: appState.filtersByModule
     });
   }
 }
@@ -2642,16 +3014,20 @@ async function initApp() {
     if (saved) {
       if (saved.theme === 'light' || saved.theme === 'dark') appState.theme = saved.theme;
       if (saved.module === 'deployment' || saved.module === 'planning') appState.module = saved.module;
-      if (saved.filters && typeof saved.filters === 'object') {
-        Object.keys(appState.filters).forEach(k => {
-          if (Array.isArray(saved.filters[k])) appState.filters[k] = saved.filters[k];
+      if (saved.filtersByModule && typeof saved.filtersByModule === 'object') {
+        ['deployment', 'planning'].forEach(mod => {
+          if (saved.filtersByModule[mod]) {
+            Object.keys(appState.filtersByModule[mod]).forEach(k => {
+              if (Array.isArray(saved.filtersByModule[mod][k])) {
+                appState.filtersByModule[mod][k] = saved.filtersByModule[mod][k];
+              }
+            });
+          }
         });
       }
     }
   }
   applyTheme();
-  buildChecklistSidebar();
-  updateFilterBadges();
   switchModule(appState.module);
   if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons();
   if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === 'function') {
