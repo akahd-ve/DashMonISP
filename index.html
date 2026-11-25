@@ -7,7 +7,7 @@
   <meta name="design-style" content="aurora">
   <title>Monitoring Project ISP</title>
   <!-- Google Fonts: Instrument Sans, Plus Jakarta Sans, Geist Mono -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
   <!-- Chart.js untuk visualisasi Kurva S, Donut, dan Bar Chart Regional -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
   <!-- Lucide Icons -->
@@ -137,6 +137,85 @@
       0%, 100% { transform: scale(1); opacity: 1; }
       50% { transform: scale(1.35); opacity: 0.65; }
     }
+
+    /* Efek pembuka scoreboard: kartu masuk bertahap, angka mendapat kilau singkat. */
+    @keyframes kpiCardEntrance {
+      0% {
+        opacity: 0.35;
+        transform: translateY(13px) scale(0.985);
+        filter: saturate(0.72);
+      }
+      48% {
+        opacity: 1;
+        transform: translateY(-3px) scale(1.012);
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 34%, transparent),
+                    0 10px 26px color-mix(in srgb, var(--primary) 15%, transparent);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: saturate(1);
+      }
+    }
+    @keyframes kpiValueFlash {
+      0% { opacity: 0.45; transform: translateY(5px) scale(0.92); text-shadow: 0 0 0 transparent; }
+      38% { opacity: 1; transform: translateY(-2px) scale(1.07); text-shadow: 0 0 15px color-mix(in srgb, currentColor 42%, transparent); }
+      72% { transform: translateY(0) scale(0.99); }
+      100% { opacity: 1; transform: translateY(0) scale(1); text-shadow: none; }
+    }
+    /* Motion feedback berulang untuk interaksi: modul, KPI, checklist, chart, dan tabel. */
+    @keyframes dashboardActivityMotion {
+      0% { opacity: 0.84; transform: translateY(7px); filter: brightness(0.94); }
+      34% { opacity: 1; transform: translateY(-2px); filter: brightness(1.035); }
+      68% { transform: translateY(1px); filter: brightness(1.01); }
+      100% { opacity: 1; transform: translateY(0); filter: brightness(1); }
+    }
+    @keyframes activityCardMotion {
+      0% { opacity: 0.76; transform: translateY(9px) scale(0.988); filter: saturate(0.82); }
+      42% { opacity: 1; transform: translateY(-2px) scale(1.012); filter: saturate(1.12); box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 30%, transparent), 0 10px 25px color-mix(in srgb, var(--primary) 13%, transparent); }
+      72% { transform: translateY(1px) scale(0.998); }
+      100% { opacity: 1; transform: translateY(0) scale(1); filter: saturate(1); }
+    }
+    @keyframes activityValueMotion {
+      0% { opacity: 0.58; transform: translateY(5px) scale(0.94); text-shadow: none; }
+      38% { opacity: 1; transform: translateY(-2px) scale(1.075); text-shadow: 0 0 16px color-mix(in srgb, currentColor 46%, transparent); }
+      72% { transform: translateY(0) scale(0.995); }
+      100% { opacity: 1; transform: translateY(0) scale(1); text-shadow: none; }
+    }
+    .activity-view-animate {
+      animation: dashboardActivityMotion 1320ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+      transform-origin: top center;
+    }
+    .score-card.activity-card-animate {
+      animation: activityCardMotion 1120ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+      animation-delay: var(--activity-card-delay, 0ms);
+      will-change: transform, opacity, filter, box-shadow;
+    }
+    .score-card .score-value.activity-value-animate {
+      animation: activityValueMotion 1020ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+      animation-delay: var(--activity-value-delay, 90ms);
+      transform-origin: left center;
+      will-change: transform, opacity, text-shadow;
+    }
+    .score-card.kpi-intro-animate {
+      animation: kpiCardEntrance 820ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+      animation-delay: var(--kpi-intro-delay, 0ms);
+      will-change: transform, opacity, box-shadow;
+    }
+    .score-card .score-value.kpi-value-flash {
+      animation: kpiValueFlash 720ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+      animation-delay: var(--kpi-value-delay, 100ms);
+      transform-origin: left center;
+      will-change: transform, opacity, text-shadow;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .score-card.kpi-intro-animate,
+      .score-card .score-value.kpi-value-flash {
+        animation: none !important;
+        will-change: auto;
+      }
+    }
+
     .anim-in { animation: riseIn var(--dur-long) var(--ease-out) both; }
     .delay-1 { animation-delay: 50ms; }
     .delay-2 { animation-delay: 110ms; }
@@ -324,39 +403,54 @@
 
     .sidebar-meta {
       margin-top: auto;
-      padding-top: var(--space-md);
+      padding-top: 12px;
       border-top: var(--hairline);
-      font-family: var(--font-label);
-      font-size: var(--label-size);
-      color: var(--on-surface-variant);
       display: flex;
-      flex-direction: column;
-      gap: var(--space-xs);
+      flex-direction: row;
+      align-items: center;
+      gap: 0;
+      min-width: 0;
     }
     .sidebar-credit {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       align-items: center;
-      gap: 6px;
-      padding: 0 0 2px;
-      color: var(--on-surface-variant);
-      font-size: 0.68rem;
-      line-height: 1.45;
+      justify-content: flex-start;
+      gap: 5px;
+      width: 100%;
+      min-width: 0;
+      white-space: nowrap;
+      color: var(--on-surface);
+      font-family: 'Orbitron', 'Geist Mono', monospace;
+      font-size: 0.60rem;
+      font-weight: 800;
+      letter-spacing: -0.045em;
+      line-height: 1.25;
     }
-    .sidebar-credit-label { font-weight: 600; color: var(--on-surface); }
+    .sidebar-credit-label {
+      color: var(--on-surface);
+      font-family: 'Orbitron', 'Geist Mono', monospace;
+      font-size: 0.59rem;
+      font-weight: 800;
+      letter-spacing: -0.055em;
+      white-space: nowrap;
+    }
     .sidebar-telegram-link {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       color: var(--primary);
       text-decoration: none;
-      font-weight: 700;
+      font-family: 'Orbitron', 'Geist Mono', monospace;
+      font-size: 0.60rem;
+      font-weight: 800;
+      letter-spacing: -0.045em;
+      white-space: nowrap;
       border-radius: var(--rounded-full);
     }
     .sidebar-telegram-link:hover { text-decoration: underline; }
     .sidebar-telegram-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-    .sidebar-telegram-link svg { width: 16px; height: 16px; flex: 0 0 16px; }
-    .active-filter-count { color: var(--primary); font-weight: 600; }
+    .sidebar-telegram-link svg { width: 13px; height: 13px; flex: 0 0 13px; }
 
     /* ==========================================================================
        3. HEADER & ACTION BUTTONS (SYNC 2 SHEET NOTEBOOK + AI CHAT + MODE)
@@ -1115,23 +1209,18 @@
       <button type="button" class="btn-reset" onclick="resetAllFilters()">Reset Filter</button>
     </div>
 
-    <div class="filter-source-pill" id="sidebarFilterSourceBadge">
-      <span>Sumber Filter:</span>
-      <strong id="sidebarSourceSheetName">DATA BASE ISP - DEPLOYMENT</strong>
-    </div>
-
     <div class="checklist-stack" id="checklistContainer"></div>
 
     <div class="sidebar-meta">
       <div class="sidebar-credit">
         <span class="sidebar-credit-label">Develop By Akahd Visual Editor</span>
-        <span aria-hidden="true"></span>
+        <span aria-hidden="true">|</span>
         <a class="sidebar-telegram-link" href="https://t.me/hardana" target="_blank" rel="noopener noreferrer" aria-label="Hubungi @hardana melalui Telegram">
           <svg viewBox="0 0 24 24" role="img" aria-label="Telegram">
             <circle cx="12" cy="12" r="11" fill="#229ED9"></circle>
             <path d="M18.8 6.5 16.6 17c-.16.74-.6.92-1.22.57l-3.38-2.49-1.63 1.57c-.18.18-.33.33-.67.33l.24-3.44 6.26-5.66c.27-.24-.06-.38-.42-.14l-7.74 4.88-3.33-1.04c-.72-.23-.74-.72.15-1.07l13.02-5.02c.6-.22 1.12.14.92 1.01Z" fill="#fff"></path>
           </svg>
-          <span>@Hardana</span>
+          <span>@hardana</span>
         </a>
       </div>
     </div>
@@ -1817,9 +1906,9 @@ const PROGRESS_DISPLAY = [
 
 const FILTER_DEFS = [
   { key: 'reg', label: 'Region', open: true },
-  { key: 'jen', label: 'Jenis Project', open: true },
+  { key: 'type', label: 'Type Req', open: true },
+  { key: 'jen', label: 'Jenis Project', open: false },
   { key: 'prog', label: 'Progress ISP', open: false },
-  { key: 'type', label: 'Type Req', open: false },
   { key: 'prio', label: 'Prioritas', open: false },
   { key: 'merk', label: 'Merk OLT / Vendor', open: false }
 ];
@@ -1843,6 +1932,11 @@ let chartVendorProgress = null;
 let chartPlanDonut = null;
 let chartPlanRegion = null;
 let chartPlanNeedVsPriority = null;
+let activityMotionDebounce = null;
+const activityMotionTimers = new WeakMap();
+
+// Animasi pembuka hanya dijalankan sekali per modul pada setiap sesi halaman.
+const kpiIntroPlayed = { deployment: false, planning: false };
 
 const PLAN_URGENT_OSP_STAGES = [
   { key: 'matdel', label: '2. Matdel', rank: 2, colorVar: '--data-5', matcher: /^2\.\s*matdel\b/i },
@@ -1899,19 +1993,6 @@ function buildChecklistSidebar() {
 
   const activeData = getActiveDataset(appState.module);
   const activeFilters = getActiveFilters(appState.module);
-
-  const srcBadge = document.getElementById('sidebarSourceSheetName');
-  const srcMeta = document.getElementById('sidebarSyncSourceMeta');
-  if (srcBadge) {
-    srcBadge.textContent = appState.module === 'planning'
-      ? 'DATA BASE ISP - PLANNING'
-      : 'DATA BASE ISP - DEPLOYMENT';
-  }
-  if (srcMeta) {
-    srcMeta.innerHTML = appState.module === 'planning'
-      ? `Sheet Aktif: <strong>PLANNING (${PLANNING_RECORDS.length} baris)</strong>`
-      : `Sheet Aktif: <strong>DEPLOYMENT (${DEPLOYMENT_RECORDS.length} baris)</strong>`;
-  }
 
   FILTER_DEFS.forEach(def => {
     const counts = getChecklistCounts(activeData, def);
@@ -2081,6 +2162,7 @@ function switchModule(mod) {
   renderAll();
   syncDeploymentKpiCards();
   syncPlanningKpiCards();
+  playKpiIntroAnimation(mod);
   saveState();
 }
 
@@ -2106,6 +2188,7 @@ function toggleMobileSidebar() {
   if (!sb || !btn) return;
   const isOpen = sb.classList.toggle('mobile-open');
   btn.setAttribute('aria-expanded', String(isOpen));
+  scheduleActivityMotion();
 }
 
 function onSearchChange(mod) {
@@ -2130,6 +2213,83 @@ function syncPlanningKpiCards() {
     const isActive = card.dataset.planKpiFilter === active;
     card.classList.toggle('is-kpi-active', isActive);
     card.setAttribute('aria-pressed', String(isActive));
+  });
+}
+
+function replayActivityAnimation(el, className, durationMs, delayProperty = null) {
+  if (!el) return;
+  const previousTimer = activityMotionTimers.get(el);
+  if (previousTimer) window.clearTimeout(previousTimer);
+  el.classList.remove(className);
+  void el.offsetWidth;
+  el.classList.add(className);
+  const timer = window.setTimeout(() => {
+    el.classList.remove(className);
+    if (delayProperty) el.style.removeProperty(delayProperty);
+    activityMotionTimers.delete(el);
+  }, durationMs + 130);
+  activityMotionTimers.set(el, timer);
+}
+
+function playActivityMotion(mod = appState.module) {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const view = document.getElementById(mod === 'planning' ? 'view-planning' : 'view-deployment');
+  if (!view || view.classList.contains('hidden-view')) return;
+
+  replayActivityAnimation(view, 'activity-view-animate', 1320);
+  const cards = Array.from(view.querySelectorAll('.scoreboard-row-6 .score-card'));
+  cards.forEach((card, index) => {
+    const cardDelay = `${index * 70}ms`;
+    const valueDelay = `${index * 70 + 90}ms`;
+    card.style.setProperty('--activity-card-delay', cardDelay);
+    replayActivityAnimation(card, 'activity-card-animate', 1120 + index * 70, '--activity-card-delay');
+    const value = card.querySelector('.score-value');
+    if (value) {
+      value.style.setProperty('--activity-value-delay', valueDelay);
+      replayActivityAnimation(value, 'activity-value-animate', 1020 + index * 70 + 90, '--activity-value-delay');
+    }
+  });
+}
+
+function scheduleActivityMotion(mod = appState.module) {
+  if (activityMotionDebounce) window.clearTimeout(activityMotionDebounce);
+  activityMotionDebounce = window.setTimeout(() => {
+    activityMotionDebounce = null;
+    playActivityMotion(mod);
+  }, 75);
+}
+
+function playKpiIntroAnimation(mod) {
+  if (!Object.prototype.hasOwnProperty.call(kpiIntroPlayed, mod) || kpiIntroPlayed[mod]) return;
+
+  const viewId = mod === 'planning' ? 'view-planning' : 'view-deployment';
+  const view = document.getElementById(viewId);
+  if (!view) return;
+
+  const cards = Array.from(view.querySelectorAll('.scoreboard-row-6 .score-card'));
+  if (!cards.length) return;
+
+  // Tandai sebelum memulai agar pergantian modul cepat tidak menggandakan animasi.
+  kpiIntroPlayed[mod] = true;
+  cards.forEach((card, index) => {
+    const value = card.querySelector('.score-value');
+    card.style.setProperty('--kpi-intro-delay', `${index * 75}ms`);
+    card.classList.add('kpi-intro-animate');
+    card.addEventListener('animationend', event => {
+      if (event.target !== card || event.animationName !== 'kpiCardEntrance') return;
+      card.classList.remove('kpi-intro-animate');
+      card.style.removeProperty('--kpi-intro-delay');
+    });
+
+    if (value) {
+      value.style.setProperty('--kpi-value-delay', `${index * 75 + 110}ms`);
+      value.classList.add('kpi-value-flash');
+      value.addEventListener('animationend', event => {
+        if (event.target !== value || event.animationName !== 'kpiValueFlash') return;
+        value.classList.remove('kpi-value-flash');
+        value.style.removeProperty('--kpi-value-delay');
+      });
+    }
   });
 }
 
@@ -3033,6 +3193,7 @@ function renderTable(mod) {
   if (pLbl) pLbl.textContent = `Hal ${state.page} / ${maxPage}`;
   if (prevBtn) prevBtn.disabled = state.page <= 1;
   if (nextBtn) nextBtn.disabled = state.page >= maxPage;
+  scheduleActivityMotion(targetMod);
 }
 
 function showDepDetail(r) {
@@ -3051,6 +3212,7 @@ function showDepDetail(r) {
   grid.innerHTML = fields.map(([k, v]) => `<div><div class="detail-kv-lbl">${escapeHtml(k)}</div><div class="detail-kv-val">${escapeHtml(v)}</div></div>`).join('');
   rem.textContent = r.rem || 'Tidak ada catatan lapangan.';
   box.classList.add('open');
+  scheduleActivityMotion('deployment');
 }
 
 function showPlanDetail(r) {
@@ -3077,11 +3239,13 @@ function showPlanDetail(r) {
     ? `✓ Lengkap (Ready Go Deploy) — Seluruh 5 parameter wajib sudah terisi. ${r.rem ? 'Catatan: ' + r.rem : ''}`
     : `✗ Belum Lengkap — Parameter yang masih kosong: ${gaps.join(', ')}. ${r.rem ? 'Catatan: ' + r.rem : ''}`;
   box.classList.add('open');
+  scheduleActivityMotion('planning');
 }
 
 function closeDetail(mod) {
   const box = document.getElementById(mod === 'dep' ? 'depDetailBox' : 'planDetailBox');
   if (box) box.classList.remove('open');
+  scheduleActivityMotion(mod === 'dep' ? 'deployment' : 'planning');
 }
 
 function setText(id, val) {
@@ -3362,6 +3526,13 @@ async function initApp() {
     window.notebookAppApi.notifyAppReady();
   }
 }
+
+document.addEventListener('toggle', event => {
+  const target = event.target;
+  if (target && target.classList && target.classList.contains('filter-details')) {
+    scheduleActivityMotion();
+  }
+}, true);
 
 document.addEventListener('DOMContentLoaded', initApp);
 </script>
