@@ -506,6 +506,7 @@
     }
     .span-12 { grid-column: span 12; }
     .span-7 { grid-column: span 7; }
+    .span-6 { grid-column: span 6; }
     .span-5 { grid-column: span 5; }
     .span-4 { grid-column: span 4; }
 
@@ -629,6 +630,92 @@
       display: flex;
       gap: var(--space-sm);
     }
+    .insight-donut-layout {
+      display: grid;
+      grid-template-columns: minmax(145px, 0.9fr) minmax(155px, 1.1fr);
+      gap: var(--space-md);
+      align-items: center;
+      min-height: 225px;
+    }
+    .insight-donut-wrap {
+      position: relative;
+      min-height: 215px;
+      height: 215px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .insight-chart-box {
+      position: relative;
+      width: 100%;
+      min-height: 220px;
+      height: 220px;
+    }
+    .vendor-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+    .vendor-summary-card {
+      min-width: 0;
+      background: var(--background);
+      border: var(--hairline);
+      border-radius: var(--rounded);
+      padding: 9px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .vendor-summary-head,
+    .vendor-summary-stats {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .vendor-summary-head strong {
+      color: var(--on-surface);
+      font-family: var(--font-headline);
+      font-size: 0.82rem;
+    }
+    .vendor-total {
+      color: var(--on-surface-variant);
+      font-family: var(--font-label);
+      font-size: 0.68rem;
+      white-space: nowrap;
+    }
+    .vendor-summary-stats {
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 5px 10px;
+      color: var(--on-surface-variant);
+      font-family: var(--font-label);
+      font-size: 0.67rem;
+    }
+    .vendor-summary-stats strong { color: var(--on-surface); }
+    .vendor-onair strong { color: var(--tertiary); }
+    .vendor-overdue strong { color: var(--error); }
+
+    /* Dua panel analisis Planning: Top 10 LOP dengan kebutuhan OLT, dan perbandingan kebutuhan-prioritas */
+    .plan-urgent-section { display: flex; flex-direction: column; gap: var(--space-md); margin-bottom: var(--space-lg); }
+    .plan-insight-panel { display: flex; flex-direction: column; gap: var(--space-md); }
+    .plan-top10-table-wrap { width: 100%; overflow: auto; border: var(--hairline); border-radius: var(--rounded); background: var(--background); }
+    .plan-top10-table { min-width: 900px; width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .plan-top10-table th { padding: 10px 9px; text-align: left; white-space: nowrap; background: var(--surface-container-low); color: var(--on-surface-variant); font-family: var(--font-label); font-size: 0.67rem; text-transform: uppercase; letter-spacing: var(--label-tracking); position: sticky; top: 0; z-index: 1; }
+    .plan-top10-table td { padding: 10px 9px; border-top: var(--hairline); vertical-align: middle; color: var(--on-surface); }
+    .plan-top10-table tbody tr { cursor: pointer; transition: background-color var(--dur-micro) var(--ease-out); }
+    .plan-top10-table tbody tr:hover { background: var(--surface-container-high); }
+    .plan-top10-rank { color: var(--primary); font-family: var(--font-label); font-weight: 800; font-variant-numeric: tabular-nums; }
+    .plan-top10-lop { min-width: 240px; max-width: 460px; font-weight: 650; }
+    .plan-top10-site { display: block; margin-top: 3px; color: var(--on-surface-variant); font-family: var(--font-label); font-size: 0.68rem; font-weight: 450; }
+    .plan-insight-tag { display: inline-flex; align-items: center; border: var(--hairline); border-radius: var(--rounded-full); padding: 4px 9px; font-size: 0.7rem; font-weight: 650; white-space: nowrap; }
+    .plan-insight-tag.priority { background: var(--amber-tint); color: var(--warning); }
+    .plan-insight-tag.osp { background: var(--cyan-tint); color: var(--primary); }
+    .plan-insight-tag.need { background: var(--sage-tint); color: var(--tertiary); }
+    .plan-insight-tag.existing { background: var(--surface-container-high); color: var(--on-surface-variant); }
+    .plan-priority-chart { position: relative; width: 100%; min-height: 245px; height: 245px; }
+    .plan-need-note { margin: 0; padding: 9px 11px; border-radius: var(--rounded); background: var(--background); border: var(--hairline); color: var(--on-surface-variant); font-size: 0.73rem; line-height: 1.5; }
+    .plan-insight-empty { padding: 20px; text-align: center; color: var(--on-surface-variant); font-size: 0.82rem; }
 
     .gap-list { display: flex; flex-direction: column; gap: var(--space-sm); }
     .gap-row {
@@ -947,7 +1034,7 @@
       .span-4 { grid-column: span 6; }
     }
     @media (max-width: 1080px) {
-      .span-7, .span-5, .span-4 { grid-column: span 12; }
+      .span-7, .span-6, .span-5, .span-4 { grid-column: span 12; }
       .region-subgrid { grid-template-columns: 1fr; }
     }
     @media (max-width: 860px) {
@@ -959,7 +1046,11 @@
     @media (max-width: 640px) {
       .main-content { padding: var(--space-md); }
       .scoreboard-row-6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .donut-layout { grid-template-columns: 1fr; }
+      .plan-need-layout { grid-template-columns: 1fr; }
+      .plan-need-donut { height: 210px; min-height: 210px; }
+      .donut-layout, .insight-donut-layout { grid-template-columns: 1fr; }
+      .insight-donut-wrap { min-height: 190px; height: 190px; }
+      .vendor-summary { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -991,6 +1082,11 @@
     <div class="filter-header-row">
       <span class="nav-heading" style="margin:0;">Filter Checklist</span>
       <button type="button" class="btn-reset" onclick="resetAllFilters()">Reset Filter</button>
+    </div>
+
+    <div class="filter-source-pill" id="sidebarFilterSourceBadge">
+      <span>Sumber Filter:</span>
+      <strong id="sidebarSourceSheetName">DATA BASE ISP - DEPLOYMENT</strong>
     </div>
 
     <div class="checklist-stack" id="checklistContainer"></div>
@@ -1112,6 +1208,38 @@
             <span class="panel-badge">3 Region Aktif</span>
           </div>
           <div class="region-subgrid" id="regionSubgrid"></div>
+        </section>
+
+        <section class="panel span-6">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Komposisi Tipe Req / Tipe Node</h2>
+              <p class="panel-desc">Pembagian jumlah node berdasarkan FULL CABINET MOLT, FRAME MOLT, MODULE OLT, dan FULL BOLT</p>
+            </div>
+            <span class="panel-badge" id="typeMixBadge">4 Kategori</span>
+          </div>
+          <div class="insight-donut-layout">
+            <div class="insight-donut-wrap">
+              <canvas id="chartTypeMix"></canvas>
+              <div class="donut-center">
+                <div class="donut-center-val" id="typeMixTotal">0</div>
+                <div class="donut-center-lbl">Total Node</div>
+              </div>
+            </div>
+            <div class="donut-legend" id="typeMixLegend"></div>
+          </div>
+        </section>
+
+        <section class="panel span-6">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Progress Deployment per Vendor</h2>
+              <p class="panel-desc">Perbandingan node ON AIR dan Overdue; total menunjukkan seluruh node per vendor</p>
+            </div>
+            <span class="panel-badge" id="vendorProgressBadge">0 Node</span>
+          </div>
+          <div class="insight-chart-box"><canvas id="chartVendorProgress"></canvas></div>
+          <div class="vendor-summary" id="vendorProgressSummary"></div>
         </section>
       </div>
 
@@ -1265,6 +1393,46 @@
           </div>
         </section>
       </div>
+
+      <!-- Analisis Planning ISP: Top 10 LOP dengan kebutuhan OLT, dan perbandingan kebutuhan-prioritas -->
+      <section class="plan-urgent-section anim-in delay-2" aria-label="Analisis Top 10 LOP, kebutuhan OLT, dan prioritas Planning ISP">
+        <section class="panel plan-insight-panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Box 1 — Top 10 LOP Prioritas &amp; Status OSP</h2>
+              <p class="panel-desc">Sepuluh LOP teratas dari tahap Matdel, OGP Instalasi, dan Finish Instal. Urutan memprioritaskan label Prio dan bulan prioritas, lalu progres OSP yang lebih maju. Kolom Kebutuhan OLT menunjukkan jenis perangkat dari Type Req setiap LOP.</p>
+            </div>
+            <span class="panel-badge" id="planUrgentTop10Badge">Top 10 · 0 kandidat</span>
+          </div>
+          <div class="plan-top10-table-wrap">
+            <table class="plan-top10-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Nama LOP / Region / Site ID</th>
+                  <th>Prioritas</th>
+                  <th>Status OSP</th>
+                  <th>Kebutuhan OLT</th>
+                </tr>
+              </thead>
+              <tbody id="planUrgentTop10Body"></tbody>
+            </table>
+          </div>
+          <p class="plan-need-note">Kebutuhan OLT diambil dari kolom Type Req pada masing-masing LOP. Use Existing atau nilai kosong tetap ditampilkan sesuai data dan tidak dikategorikan sebagai pengadaan OLT baru.</p>
+        </section>
+
+        <section class="panel plan-insight-panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Box 2 — Perbandingan Kebutuhan OLT vs Prioritas</h2>
+              <p class="panel-desc">Grafik sederhana membandingkan total kebutuhan Mini, Module, dan Big OLT dengan jumlah LOP berlabel prioritas pada tiap jenis kebutuhan.</p>
+            </div>
+            <span class="panel-badge" id="planNeedVsPriorityBadge">0 LOP kandidat</span>
+          </div>
+          <div class="plan-priority-chart"><canvas id="chartPlanNeedVsPriority"></canvas></div>
+          <p class="plan-need-note" id="planNeedVsPriorityNote">Kebutuhan mencakup seluruh kandidat pada tahap Matdel, OGP Instalasi, dan Finish Instal sesuai filter Planning aktif. Prioritas adalah bagian dari kandidat tersebut yang memiliki label Prio.</p>
+        </section>
+      </section>
 
       <section class="panel anim-in delay-3">
         <div class="panel-head">
@@ -1631,8 +1799,17 @@ const appState = {
 let chartSCurve = null;
 let chartDepDonut = null;
 let chartRegionSub = {};
+let chartTypeMix = null;
+let chartVendorProgress = null;
 let chartPlanDonut = null;
 let chartPlanRegion = null;
+let chartPlanNeedVsPriority = null;
+
+const PLAN_URGENT_OSP_STAGES = [
+  { key: 'matdel', label: '2. Matdel', rank: 2, colorVar: '--data-5', matcher: /^2\.\s*matdel\b/i },
+  { key: 'install', label: '3. OGP Instalasi', rank: 3, colorVar: '--data-3', matcher: /^3\.\s*ogp\s*instal/i },
+  { key: 'finish', label: '4. Finish Instal', rank: 4, colorVar: '--data-2', matcher: /^4\.\s*finish\s*instal/i }
+];
 
 function cssVar(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -1938,6 +2115,7 @@ function renderDeploymentModule(rows) {
   renderSCurveChart(rows);
   renderDepDonutChart(rows);
   renderRegionSubCharts(rows);
+  renderDeploymentInsightCharts(rows);
   renderTable('dep');
 }
 
@@ -2098,6 +2276,179 @@ function renderRegionSubCharts(rows) {
   });
 }
 
+function getDeploymentVendorGroup(merk) {
+  const value = String(merk || '').trim().toUpperCase();
+  if (value.startsWith('ZTE')) return 'ZTE';
+  if (value.startsWith('HW') || value.includes('HUAWEI')) return 'HUAWEI';
+  if (value.startsWith('FH') || value.includes('FIBERHOME')) return 'FIBERHOME';
+  return null;
+}
+
+function renderDeploymentInsightCharts(rows) {
+  renderTypeMixChart(rows);
+  renderVendorProgressChart(rows);
+}
+
+function renderTypeMixChart(rows) {
+  const canvas = document.getElementById('chartTypeMix');
+  const legend = document.getElementById('typeMixLegend');
+  if (!canvas || !legend) return;
+
+  const typeDefs = [
+    { key: 'FULL CABINET MOLT', label: 'FULL CABINET MOLT', color: cssVar('--data-1') },
+    { key: 'FRAME MOLT', label: 'FRAME MOLT', color: cssVar('--data-3') },
+    { key: 'MODULE OLT', label: 'MODULE OLT', color: cssVar('--data-5') },
+    { key: 'FULL BOLT', label: 'FULL BOLT', color: cssVar('--data-6') }
+  ];
+  const counts = typeDefs.map(item => ({
+    ...item,
+    count: rows.filter(row => String(row.type || '').trim().toUpperCase() === item.key).length
+  }));
+  const recognized = new Set(typeDefs.map(item => item.key));
+  const otherCount = rows.filter(row => !recognized.has(String(row.type || '').trim().toUpperCase())).length;
+  if (otherCount > 0) counts.push({ key: '__OTHER__', label: 'Lainnya / Belum Diisi', count: otherCount, color: cssVar('--data-context') });
+
+  const total = counts.reduce((sum, item) => sum + item.count, 0);
+  setText('typeMixTotal', total.toLocaleString('id-ID'));
+  setText('typeMixBadge', `${counts.filter(item => item.count > 0).length} kategori terisi`);
+
+  legend.innerHTML = '';
+  counts.forEach(item => {
+    const pct = total ? ((item.count / total) * 100).toFixed(1) : '0.0';
+    const node = document.createElement('div');
+    node.className = 'legend-item';
+    node.innerHTML = `<span class="legend-left"><span class="legend-dot" style="background:${item.color};"></span><span>${escapeHtml(item.label)}</span></span><span class="legend-val">${item.count.toLocaleString('id-ID')} <small style="color:var(--on-surface-variant);font-weight:500;">(${pct}%)</small></span>`;
+    legend.appendChild(node);
+  });
+
+  if (typeof Chart === 'undefined') return;
+  if (chartTypeMix) chartTypeMix.destroy();
+  chartTypeMix = new Chart(canvas, {
+    type: 'doughnut',
+    data: {
+      labels: counts.map(item => item.label),
+      datasets: [{
+        data: counts.map(item => item.count),
+        backgroundColor: counts.map(item => item.color),
+        borderWidth: 1.5,
+        borderColor: cssVar('--surface-container-low'),
+        hoverOffset: 5
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '68%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: context => {
+              const value = Number(context.raw) || 0;
+              const pct = total ? ((value / total) * 100).toFixed(1) : '0.0';
+              return ` ${context.label}: ${value.toLocaleString('id-ID')} node (${pct}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderVendorProgressChart(rows) {
+  const canvas = document.getElementById('chartVendorProgress');
+  const summary = document.getElementById('vendorProgressSummary');
+  if (!canvas || !summary) return;
+
+  const vendorDefs = [
+    { key: 'ZTE', label: 'ZTE' },
+    { key: 'HUAWEI', label: 'HUAWEI' },
+    { key: 'FIBERHOME', label: 'FIBERHOME' }
+  ];
+  const metrics = vendorDefs.map(vendor => {
+    const vendorRows = rows.filter(row => getDeploymentVendorGroup(row.merk) === vendor.key);
+    return {
+      ...vendor,
+      total: vendorRows.length,
+      onAir: vendorRows.filter(row => row.prog === 'ON AIR').length,
+      overdue: vendorRows.filter(row => row.isOverdue).length
+    };
+  });
+  const totalVendorRows = metrics.reduce((sum, item) => sum + item.total, 0);
+  setText('vendorProgressBadge', `${totalVendorRows.toLocaleString('id-ID')} Node • 3 Vendor`);
+
+  summary.innerHTML = '';
+  metrics.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'vendor-summary-card';
+    card.innerHTML = `
+      <div class="vendor-summary-head"><strong>${item.label}</strong><span class="vendor-total">Total ${item.total.toLocaleString('id-ID')}</span></div>
+      <div class="vendor-summary-stats">
+        <span class="vendor-onair">ON AIR <strong>${item.onAir.toLocaleString('id-ID')}</strong></span>
+        <span class="vendor-overdue">OVERDUE <strong>${item.overdue.toLocaleString('id-ID')}</strong></span>
+      </div>`;
+    summary.appendChild(card);
+  });
+
+  if (typeof Chart === 'undefined') return;
+  if (chartVendorProgress) chartVendorProgress.destroy();
+  const txt = cssVar('--on-surface-variant');
+  const grid = cssVar('--outline-variant');
+  chartVendorProgress = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: metrics.map(item => `${item.label} • ${item.total.toLocaleString('id-ID')} total`),
+      datasets: [
+        {
+          label: 'ON AIR',
+          data: metrics.map(item => item.onAir),
+          backgroundColor: cssVar('--data-2'),
+          borderRadius: 5,
+          borderSkipped: false,
+          barPercentage: 0.72,
+          categoryPercentage: 0.72
+        },
+        {
+          label: 'OVERDUE',
+          data: metrics.map(item => item.overdue),
+          backgroundColor: cssVar('--data-8'),
+          borderRadius: 5,
+          borderSkipped: false,
+          barPercentage: 0.72,
+          categoryPercentage: 0.72
+        }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: { color: txt, boxWidth: 11, usePointStyle: true, pointStyle: 'rectRounded', font: { family: 'Geist Mono', size: 10 } }
+        },
+        tooltip: {
+          callbacks: {
+            label: context => ` ${context.dataset.label}: ${(Number(context.raw) || 0).toLocaleString('id-ID')} node`
+          }
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          ticks: { color: txt, precision: 0, font: { family: 'Geist Mono', size: 10 } },
+          grid: { color: grid }
+        },
+        y: {
+          ticks: { color: txt, font: { family: 'Geist Mono', size: 10 } },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
 // Render Modul 2: Planning ISP langsung dari 900 baris DATA BASE ISP - PLANNING
 function renderPlanningModule(rows) {
   const totalPlanLop = rows.length;
@@ -2122,7 +2473,183 @@ function renderPlanningModule(rows) {
   renderPlanDonut(readyPlan, incompletePlan, readinessPct);
   renderPlanGapCard(rows);
   renderPlanRegionChart(rows);
+  renderPlanningUrgency(rows);
   renderTable('plan');
+}
+
+function getPlanningOspStage(row) {
+  const status = String(row.osp || '').trim();
+  return PLAN_URGENT_OSP_STAGES.find(stage => stage.matcher.test(status)) || null;
+}
+
+function isPlanningPriority(row) {
+  const value = String(row.prio || '').trim();
+  return /^prio\b/i.test(value) && !/^non\s+priority$/i.test(value);
+}
+
+function getPlanningPriorityOrder(row) {
+  const value = String(row.prio || '').trim().toLowerCase();
+  if (/^prio\b/.test(value)) {
+    const months = [
+      ['januari', 1], ['februari', 2], ['maret', 3], ['april', 4], ['mei', 5],
+      ['juni', 6], ['juli', 7], ['agustus', 8], ['september', 9], ['oktober', 10],
+      ['november', 11], ['desember', 12]
+    ];
+    const month = months.find(([name]) => value.includes(name));
+    return { group: 0, month: month ? month[1] : 0, label: value };
+  }
+  if (value === 'non priority') return { group: 1, month: 99, label: value };
+  return { group: 2, month: 99, label: value };
+}
+
+function renderPlanningUrgency(rows) {
+  const candidates = rows
+    .map(row => ({ row, stage: getPlanningOspStage(row) }))
+    .filter(item => item.stage);
+
+  const ranked = [...candidates].sort((a, b) => {
+    const pa = getPlanningPriorityOrder(a.row);
+    const pb = getPlanningPriorityOrder(b.row);
+    const noA = Number(a.row.no) || 0;
+    const noB = Number(b.row.no) || 0;
+    return pa.group - pb.group || pa.month - pb.month ||
+      b.stage.rank - a.stage.rank || Number(Boolean(b.row.ready)) - Number(Boolean(a.row.ready)) ||
+      noA - noB || pa.label.localeCompare(pb.label);
+  });
+
+  const topRows = ranked.slice(0, 10);
+  renderPlanningTop10(topRows, candidates.length);
+  renderPlanningNeedVsPriorityChart(candidates);
+}
+
+function renderPlanningTop10(topRows, candidateTotal) {
+  const body = document.getElementById('planUrgentTop10Body');
+  const badge = document.getElementById('planUrgentTop10Badge');
+  if (!body) return;
+
+  if (badge) badge.textContent = `Top ${topRows.length} · ${candidateTotal.toLocaleString('id-ID')} kandidat`;
+
+  if (!topRows.length) {
+    body.innerHTML = '<tr><td colspan="5" class="plan-insight-empty">Tidak ada LOP pada tahap Matdel, OGP Instalasi, atau Finish Instal untuk filter saat ini.</td></tr>';
+    return;
+  }
+
+  const typeLabels = {
+    'MINI OLT': 'Mini OLT',
+    'MODULE OLT': 'Module OLT',
+    'BIG OLT': 'Big OLT',
+    'USE EXISTING': 'Use Existing'
+  };
+
+  body.innerHTML = topRows.map((item, index) => {
+    const row = item.row;
+    const priorityLabel = String(row.prio || '').trim();
+    const priorityText = (!priorityLabel || priorityLabel === '#N/A') ? 'Belum ditentukan' : priorityLabel;
+    const rawType = String(row.type || '').trim().toUpperCase();
+    const typeLabel = typeLabels[rawType] || (rawType && rawType !== '#N/A' ? rawType : 'Belum ditentukan');
+    const typeClass = ['MINI OLT', 'MODULE OLT', 'BIG OLT'].includes(rawType) ? 'need' : 'existing';
+    return `
+      <tr data-plan-rank="${index}">
+        <td class="plan-top10-rank">#${index + 1}</td>
+        <td class="plan-top10-lop">${escapeHtml(row.lop || 'Nama LOP belum tersedia')}<span class="plan-top10-site">${escapeHtml(row.reg || '—')} · Site ID ${escapeHtml(row.site || '—')}</span></td>
+        <td><span class="plan-insight-tag ${isPlanningPriority(row) ? 'priority' : 'existing'}">${escapeHtml(priorityText)}</span></td>
+        <td><span class="plan-insight-tag osp">${escapeHtml(item.stage.label)}</span></td>
+        <td><span class="plan-insight-tag ${typeClass}">${escapeHtml(typeLabel)}</span></td>
+      </tr>`;
+  }).join('');
+
+  body.querySelectorAll('tr[data-plan-rank]').forEach((tr, index) => {
+    tr.addEventListener('click', () => showPlanDetail(topRows[index].row));
+  });
+}
+
+function renderPlanningNeedVsPriorityChart(candidates) {
+  const canvas = document.getElementById('chartPlanNeedVsPriority');
+  const badge = document.getElementById('planNeedVsPriorityBadge');
+  const note = document.getElementById('planNeedVsPriorityNote');
+  if (chartPlanNeedVsPriority && typeof Chart !== 'undefined') chartPlanNeedVsPriority.destroy();
+
+  const catalog = [
+    { key: 'MINI OLT', label: 'Mini OLT' },
+    { key: 'MODULE OLT', label: 'Module OLT' },
+    { key: 'BIG OLT', label: 'Big OLT' }
+  ];
+  const needs = catalog.map(() => 0);
+  const priorities = catalog.map(() => 0);
+
+  candidates.forEach(item => {
+    const type = String(item.row.type || '').trim().toUpperCase();
+    const index = catalog.findIndex(entry => entry.key === type);
+    if (index < 0) return;
+    needs[index] += 1;
+    if (isPlanningPriority(item.row)) priorities[index] += 1;
+  });
+
+  if (badge) badge.textContent = `${candidates.length.toLocaleString('id-ID')} LOP kandidat`;
+
+  if (canvas && typeof Chart !== 'undefined') {
+    chartPlanNeedVsPriority = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: catalog.map(item => item.label),
+        datasets: [
+          {
+            label: 'Kebutuhan',
+            data: needs,
+            backgroundColor: cssVar('--data-1'),
+            borderRadius: 6,
+            borderSkipped: false,
+            barPercentage: 0.7,
+            categoryPercentage: 0.72
+          },
+          {
+            label: 'Prioritas',
+            data: priorities,
+            backgroundColor: cssVar('--data-3'),
+            borderRadius: 6,
+            borderSkipped: false,
+            barPercentage: 0.7,
+            categoryPercentage: 0.72
+          }
+        ]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: { color: cssVar('--on-surface-variant'), usePointStyle: true, boxWidth: 8, boxHeight: 8, font: { size: 10 } }
+          },
+          tooltip: {
+            callbacks: {
+              label: context => ` ${context.dataset.label}: ${Number(context.raw || 0).toLocaleString('id-ID')} LOP`
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: { color: cssVar('--on-surface-variant'), precision: 0, font: { family: 'Geist Mono', size: 10 } },
+            grid: { color: cssVar('--outline-variant') }
+          },
+          y: {
+            ticks: { color: cssVar('--on-surface-variant'), font: { size: 11, weight: '600' } },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  }
+
+  const totalNeeds = needs.reduce((sum, value) => sum + value, 0);
+  const totalPriority = priorities.reduce((sum, value) => sum + value, 0);
+  if (note) {
+    note.textContent = `Total kebutuhan perangkat: ${totalNeeds.toLocaleString('id-ID')} LOP. Dari jumlah tersebut, ${totalPriority.toLocaleString('id-ID')} LOP memiliki label prioritas (Prio). Perbandingan dihitung untuk kandidat tahap Matdel, OGP Instalasi, dan Finish Instal sesuai filter Planning yang aktif.`;
+  }
 }
 
 function renderPlanDonut(ready, incomplete, pctStr) {
