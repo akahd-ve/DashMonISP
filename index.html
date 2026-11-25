@@ -333,6 +333,29 @@
       flex-direction: column;
       gap: var(--space-xs);
     }
+    .sidebar-credit {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      padding: 0 0 2px;
+      color: var(--on-surface-variant);
+      font-size: 0.68rem;
+      line-height: 1.45;
+    }
+    .sidebar-credit-label { font-weight: 600; color: var(--on-surface); }
+    .sidebar-telegram-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+      border-radius: var(--rounded-full);
+    }
+    .sidebar-telegram-link:hover { text-decoration: underline; }
+    .sidebar-telegram-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .sidebar-telegram-link svg { width: 16px; height: 16px; flex: 0 0 16px; }
     .active-filter-count { color: var(--primary); font-weight: 600; }
 
     /* ==========================================================================
@@ -425,6 +448,12 @@
       gap: var(--space-md);
     }
     .score-card {
+      appearance: none;
+      width: 100%;
+      text-align: left;
+      color: var(--on-surface);
+      font: inherit;
+      cursor: pointer;
       background: var(--panel-gradient);
       border: var(--hairline);
       border-radius: var(--rounded-lg);
@@ -433,9 +462,11 @@
       flex-direction: column;
       justify-content: space-between;
       gap: var(--space-xs);
-      transition: transform var(--dur-short) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+      transition: transform var(--dur-short) var(--ease-out), border-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
     }
     .score-card:hover { transform: translateY(-2px); border-color: var(--outline); }
+    .score-card:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+    .score-card.is-kpi-active { box-shadow: 0 0 0 2px var(--primary), 0 8px 22px color-mix(in srgb, var(--primary) 16%, transparent); }
     .score-card.is-primary { border-top: 3px solid var(--primary); }
     .score-card.is-positive { border-top: 3px solid var(--tertiary); }
     .score-card.is-warning { border-top: 3px solid var(--warning); }
@@ -1092,6 +1123,17 @@
     <div class="checklist-stack" id="checklistContainer"></div>
 
     <div class="sidebar-meta">
+      <div class="sidebar-credit">
+        <span class="sidebar-credit-label">Develop By Akahd Visual Editor</span>
+        <span aria-hidden="true">|</span>
+        <a class="sidebar-telegram-link" href="https://t.me/hardana" target="_blank" rel="noopener noreferrer" aria-label="Hubungi @hardana melalui Telegram">
+          <svg viewBox="0 0 24 24" role="img" aria-label="Telegram">
+            <circle cx="12" cy="12" r="11" fill="#229ED9"></circle>
+            <path d="M18.8 6.5 16.6 17c-.16.74-.6.92-1.22.57l-3.38-2.49-1.63 1.57c-.18.18-.33.33-.67.33l.24-3.44 6.26-5.66c.27-.24-.06-.38-.42-.14l-7.74 4.88-3.33-1.04c-.72-.23-.74-.72.15-1.07l13.02-5.02c.6-.22 1.12.14.92 1.01Z" fill="#fff"></path>
+          </svg>
+          <span>@hardana</span>
+        </a>
+      </div>
       <div class="active-filter-count" id="activeFilterLabel">0 filter checklist aktif</div>
       <div>Tanggal Cutoff: <strong>20 Nov 2026</strong></div>
       <div>Eksklusi Aktif: TREG 1 &amp; TREG 2 dihapus</div>
@@ -1135,36 +1177,36 @@
          ====================================================================== -->
     <section id="view-deployment" aria-label="Modul Deployment ISP">
       <div class="scoreboard-row-6 anim-in delay-1" style="margin-bottom: var(--space-lg);">
-        <article class="score-card is-primary">
+        <button type="button" class="score-card is-primary" data-kpi-filter="ALL" onclick="setDeploymentKpiFilter('ALL')" aria-pressed="true" title="Klik untuk menampilkan seluruh node sesuai filter aktif">
           <div class="score-label">Jumlah Node</div>
           <div class="score-value" id="dep-node">266</div>
           <div class="score-sub"><span class="pill-tag pill-cyan" id="dep-unique-site">266 Node</span><span>Unique SITE ID</span></div>
-        </article>
-        <article class="score-card is-danger">
+        </button>
+        <button type="button" class="score-card is-danger" data-kpi-filter="OVERDUE" onclick="setDeploymentKpiFilter('OVERDUE')" aria-pressed="false" title="Klik untuk menampilkan seluruh Site ID yang overdue">
           <div class="score-label">Total Site ID Over Duedate ISP</div>
           <div class="score-value" id="dep-overdue">0</div>
           <div class="score-sub"><span class="pill-tag pill-red" id="dep-overdue-pct">0%</span><span>Due &lt; 20 Nov 2026</span></div>
-        </article>
-        <article class="score-card is-info">
+        </button>
+        <button type="button" class="score-card is-info" data-kpi-filter="PORT_NUMERIC" onclick="setDeploymentKpiFilter('PORT_NUMERIC')" aria-pressed="false" title="Klik untuk menampilkan node yang nilai Port-nya numerik dan ikut dijumlahkan">
           <div class="score-label">Total Port (Value)</div>
           <div class="score-value" id="dep-port">0</div>
           <div class="score-sub"><span class="pill-tag pill-cyan" id="dep-port-avg">Rata² 0/site</span><span>Kapasitas GPON</span></div>
-        </article>
-        <article class="score-card is-positive">
+        </button>
+        <button type="button" class="score-card is-positive" data-kpi-filter="ON_AIR" onclick="setDeploymentKpiFilter('ON_AIR')" aria-pressed="false" title="Klik untuk menampilkan node dengan status ON AIR">
           <div class="score-label">Closed / Go-Live / On Air</div>
           <div class="score-value" id="dep-onair">0</div>
           <div class="score-sub"><span class="pill-tag pill-sage" id="dep-onair-pct">0%</span><span>Status ON AIR</span></div>
-        </article>
-        <article class="score-card is-warning">
+        </button>
+        <button type="button" class="score-card is-warning" data-kpi-filter="OPEN_LOP" onclick="setDeploymentKpiFilter('OPEN_LOP')" aria-pressed="false" title="Klik untuk menampilkan seluruh LOP yang belum ON AIR dan bukan DROP SITE">
           <div class="score-label">Open LOP</div>
           <div class="score-value" id="dep-open">0</div>
           <div class="score-sub"><span class="pill-tag pill-amber" id="dep-open-pct">0%</span><span>Aktif berjalan</span></div>
-        </article>
-        <article class="score-card is-neutral">
+        </button>
+        <button type="button" class="score-card is-neutral" data-kpi-filter="DROP_SITE" onclick="setDeploymentKpiFilter('DROP_SITE')" aria-pressed="false" title="Klik untuk menampilkan node dengan status DROP SITE">
           <div class="score-label">Drop Site</div>
           <div class="score-value" id="dep-drop">0</div>
           <div class="score-sub"><span class="pill-tag pill-red" id="dep-drop-pct">0%</span><span>Dibatalkan / Relok</span></div>
-        </article>
+        </button>
       </div>
 
       <div class="charts-grid anim-in delay-2" style="margin-bottom: var(--space-lg);">
@@ -1321,32 +1363,32 @@
          ====================================================================== -->
     <section id="view-planning" class="hidden-view" aria-label="Modul Planning ISP">
       <div class="scoreboard-row-6 anim-in delay-1" style="margin-bottom: var(--space-lg);">
-        <article class="score-card is-primary">
+        <article class="score-card is-primary" role="button" tabindex="0" data-plan-kpi-filter="ALL" aria-pressed="false" onclick="setPlanningKpiFilter('ALL')" onkeydown="handlePlanningKpiKey(event, 'ALL')" title="Menampilkan seluruh LOP Planning sesuai filter checklist aktif">
           <div class="score-label">Total LOP Planning</div>
           <div class="score-value" id="plan-total">900</div>
           <div class="score-sub"><span class="pill-tag pill-cyan">Sheet PLANNING</span><span>A3:P862</span></div>
         </article>
-        <article class="score-card is-info">
+        <article class="score-card is-info" role="button" tabindex="0" data-plan-kpi-filter="PORT_NUMERIC" aria-pressed="false" onclick="setPlanningKpiFilter('PORT_NUMERIC')" onkeydown="handlePlanningKpiKey(event, 'PORT_NUMERIC')" title="Menampilkan LOP dengan nilai Port numerik lebih dari nol">
           <div class="score-label">Total Port Plan</div>
           <div class="score-value" id="plan-port">0</div>
           <div class="score-sub"><span class="pill-tag pill-cyan" id="plan-port-filled">0 terisi</span><span>Kapasitas Plan</span></div>
         </article>
-        <article class="score-card is-positive">
+        <article class="score-card is-positive" role="button" tabindex="0" data-plan-kpi-filter="READY" aria-pressed="false" onclick="setPlanningKpiFilter('READY')" onkeydown="handlePlanningKpiKey(event, 'READY')" title="Menampilkan LOP dengan lima parameter Go Deploy lengkap">
           <div class="score-label">Total Lengkap (Ready Go Deploy)</div>
           <div class="score-value" id="plan-ready">0</div>
           <div class="score-sub"><span class="pill-tag pill-sage">5 Parameter Lengkap</span><span>Siap deploy</span></div>
         </article>
-        <article class="score-card is-warning">
+        <article class="score-card is-warning" role="button" tabindex="0" data-plan-kpi-filter="INCOMPLETE" aria-pressed="false" onclick="setPlanningKpiFilter('INCOMPLETE')" onkeydown="handlePlanningKpiKey(event, 'INCOMPLETE')" title="Menampilkan LOP yang masih memiliki parameter wajib belum lengkap">
           <div class="score-label">Total Belum Lengkap (Data Incomplete)</div>
           <div class="score-value" id="plan-incomplete">0</div>
           <div class="score-sub"><span class="pill-tag pill-amber">Butuh Kelengkapan</span><span>Gap parameter</span></div>
         </article>
-        <article class="score-card is-primary">
+        <article class="score-card is-primary" role="button" tabindex="0" data-plan-kpi-filter="READINESS" aria-pressed="false" onclick="setPlanningKpiFilter('READINESS')" onkeydown="handlePlanningKpiKey(event, 'READINESS')" title="Menampilkan LOP yang membentuk nilai kesiapan data / Ready Go Deploy">
           <div class="score-label">% Kesiapan Data</div>
           <div class="score-value" id="plan-readiness-pct">0%</div>
           <div class="score-sub"><span class="pill-tag pill-sage">Skor Kelayakan</span><span>Ready / Total</span></div>
         </article>
-        <article class="score-card is-danger">
+        <article class="score-card is-danger" role="button" tabindex="0" data-plan-kpi-filter="HOLD" aria-pressed="false" onclick="setPlanningKpiFilter('HOLD')" onkeydown="handlePlanningKpiKey(event, 'HOLD')" title="Menampilkan LOP dengan status Drop atau catatan Pending">
           <div class="score-label">Proposed Drop / Hold</div>
           <div class="score-value" id="plan-hold">0</div>
           <div class="score-sub"><span class="pill-tag pill-red" id="plan-hold-pct">0%</span><span>Drop / Pending</span></div>
@@ -1702,6 +1744,7 @@ const DEPLOYMENT_RECORDS = COMPACT_ROWS.map(r => {
     ihld: r[4],
     lop: r[5],
     port: r[6] || 0,
+    portIsNumeric: /^[+-]?(?:\d+(?:\.\d+)?|\.\d+)$/.test(String(r[6] ?? '').trim()) && Number.isFinite(Number(r[6])),
     sto: r[7],
     site: r[8],
     osp: r[9],
@@ -1792,8 +1835,8 @@ const appState = {
     deployment: { reg: [], jen: [], prog: [], type: [], prio: [], merk: [] },
     planning: { reg: [], jen: [], prog: [], type: [], prio: [], merk: [] }
   },
-  dep: { search: '', quick: 'ALL', sortKey: 'no', sortDir: 'asc', page: 1, pageSize: 12 },
-  plan: { search: '', quick: 'ALL', sortKey: 'no', sortDir: 'asc', page: 1, pageSize: 12 }
+  dep: { search: '', quick: 'ALL', kpiFilter: 'ALL', sortKey: 'no', sortDir: 'asc', page: 1, pageSize: 12 },
+  plan: { search: '', quick: 'ALL', kpiFilter: 'ALL', sortKey: 'no', sortDir: 'asc', page: 1, pageSize: 12 }
 };
 
 let chartSCurve = null;
@@ -1946,6 +1989,7 @@ function resetAllFilters() {
   if (mod === 'deployment') {
     appState.dep.search = '';
     appState.dep.quick = 'ALL';
+    appState.dep.kpiFilter = 'ALL';
     appState.dep.page = 1;
     const ds = document.getElementById('depSearchInput');
     if (ds) ds.value = '';
@@ -1953,6 +1997,7 @@ function resetAllFilters() {
   } else {
     appState.plan.search = '';
     appState.plan.quick = 'ALL';
+    appState.plan.kpiFilter = 'ALL';
     appState.plan.page = 1;
     const ps = document.getElementById('planSearchInput');
     if (ps) ps.value = '';
@@ -1962,15 +2007,49 @@ function resetAllFilters() {
   buildChecklistSidebar();
   updateFilterBadges();
   renderAll();
+  syncDeploymentKpiCards();
+  syncPlanningKpiCards();
   saveState();
   const sheetLabel = mod === 'planning' ? 'DATA BASE ISP - PLANNING (900 baris)' : 'DATA BASE ISP - DEPLOYMENT (266 baris)';
   showToast(`Filter di-reset ke tampilan penuh ${sheetLabel}`);
 }
 
+function hasNumericPortValue(row) {
+  // Menggunakan nilai mentah kolom CSV agar sel kosong yang ditampilkan sebagai 0
+  // tidak ikut dianggap sebagai penyumbang angka pada Total Port (Value).
+  return row.portIsNumeric === true;
+}
+
+function matchesDeploymentKpiFilter(row, filterKey) {
+  switch (filterKey) {
+    case 'OVERDUE': return row.isOverdue === true;
+    case 'PORT_NUMERIC': return hasNumericPortValue(row);
+    case 'ON_AIR': return row.prog === 'ON AIR';
+    case 'OPEN_LOP': return row.prog !== 'ON AIR' && row.prog !== 'DROP SITE';
+    case 'DROP_SITE': return row.prog === 'DROP SITE';
+    case 'ALL':
+    default: return true;
+  }
+}
+
+function matchesPlanningKpiFilter(row, filterKey) {
+  const isHold = String(row.prog || '').toLowerCase().includes('drop') ||
+    String(row.rem || '').toLowerCase().includes('pending');
+  switch (filterKey) {
+    case 'PORT_NUMERIC': return row.missPort === false && Number(row.port) > 0;
+    case 'READY':
+    case 'READINESS': return row.ready === true;
+    case 'INCOMPLETE': return row.ready !== true;
+    case 'HOLD': return isHold;
+    case 'ALL':
+    default: return true;
+  }
+}
+
 function getSidebarFilteredRows(mod = appState.module) {
   const dataset = getActiveDataset(mod);
   const activeFilters = getActiveFilters(mod);
-  return dataset.filter(r => {
+  const rows = dataset.filter(r => {
     if (EXCLUDED_REGIONS.has(r.reg)) return false;
     for (const def of FILTER_DEFS) {
       const sel = activeFilters[def.key];
@@ -1979,6 +2058,11 @@ function getSidebarFilteredRows(mod = appState.module) {
     }
     return true;
   });
+
+  if (mod === 'deployment') {
+    return rows.filter(r => matchesDeploymentKpiFilter(r, appState.dep.kpiFilter || 'ALL'));
+  }
+  return rows.filter(r => matchesPlanningKpiFilter(r, appState.plan.kpiFilter || 'ALL'));
 }
 
 /* ============================================================================
@@ -1999,6 +2083,8 @@ function switchModule(mod) {
   buildChecklistSidebar();
   updateFilterBadges();
   renderAll();
+  syncDeploymentKpiCards();
+  syncPlanningKpiCards();
   saveState();
 }
 
@@ -2031,6 +2117,100 @@ function onSearchChange(mod) {
   appState[mod].search = inp ? inp.value.trim().toLowerCase() : '';
   appState[mod].page = 1;
   renderTable(mod);
+}
+
+function syncDeploymentKpiCards() {
+  const active = appState.dep.kpiFilter || 'ALL';
+  document.querySelectorAll('#view-deployment [data-kpi-filter]').forEach(card => {
+    const isActive = card.dataset.kpiFilter === active;
+    card.classList.toggle('is-kpi-active', isActive);
+    card.setAttribute('aria-pressed', String(isActive));
+  });
+}
+
+function syncPlanningKpiCards() {
+  const active = appState.plan.kpiFilter || 'ALL';
+  document.querySelectorAll('#view-planning [data-plan-kpi-filter]').forEach(card => {
+    const isActive = card.dataset.planKpiFilter === active;
+    card.classList.toggle('is-kpi-active', isActive);
+    card.setAttribute('aria-pressed', String(isActive));
+  });
+}
+
+function handlePlanningKpiKey(event, filterKey) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    setPlanningKpiFilter(filterKey);
+  }
+}
+
+function setPlanningKpiFilter(filterKey) {
+  const allowed = new Set(['ALL', 'PORT_NUMERIC', 'READY', 'INCOMPLETE', 'READINESS', 'HOLD']);
+  if (!allowed.has(filterKey)) return;
+
+  const current = appState.plan.kpiFilter || 'ALL';
+  appState.plan.kpiFilter = filterKey === 'ALL' ? 'ALL' : (current === filterKey ? 'ALL' : filterKey);
+
+  // Reset filter tabel cepat dan pencarian agar semua kontributor indikator terlihat.
+  // Filter checklist sidebar tetap menjadi batas data.
+  appState.plan.quick = 'ALL';
+  appState.plan.search = '';
+  appState.plan.page = 1;
+  const search = document.getElementById('planSearchInput');
+  if (search) search.value = '';
+  document.querySelectorAll('#view-planning .quick-chip').forEach(chip => {
+    chip.classList.toggle('active', chip.dataset.q === 'ALL');
+  });
+
+  renderAll();
+  syncPlanningKpiCards();
+  saveState();
+
+  const labels = {
+    ALL: 'seluruh LOP Planning',
+    PORT_NUMERIC: 'LOP dengan Port numerik',
+    READY: 'LOP lengkap / Ready Go Deploy',
+    INCOMPLETE: 'LOP dengan data belum lengkap',
+    READINESS: 'LOP yang membentuk nilai kesiapan data',
+    HOLD: 'Proposed Drop / Hold'
+  };
+  showToast(`Filter Planning aktif: ${labels[appState.plan.kpiFilter]}. Semua indikator, grafik, analisis Top 10, kebutuhan OLT, dan Database LOP Planning telah diperbarui.`);
+}
+
+function setDeploymentKpiFilter(filterKey) {
+  const allowed = new Set(['ALL', 'OVERDUE', 'PORT_NUMERIC', 'ON_AIR', 'OPEN_LOP', 'DROP_SITE']);
+  if (!allowed.has(filterKey)) return;
+
+  const current = appState.dep.kpiFilter || 'ALL';
+  // Klik KPI yang sama sekali lagi mengembalikan tampilan ke semua node.
+  appState.dep.kpiFilter = filterKey === 'ALL' ? 'ALL' : (current === filterKey ? 'ALL' : filterKey);
+
+  // Reset pencarian/filter cepat agar seluruh baris penyumbang KPI tampil.
+  // Filter checklist sidebar tetap berlaku sebagai batas dataset.
+  appState.dep.quick = 'ALL';
+  appState.dep.search = '';
+  appState.dep.page = 1;
+  const search = document.getElementById('depSearchInput');
+  if (search) search.value = '';
+  document.querySelectorAll('#view-deployment .quick-chip').forEach(chip => {
+    chip.classList.toggle('active', chip.dataset.q === 'ALL');
+  });
+
+  // renderAll() mengalirkan subset hasil KPI ke seluruh KPI, chart, Progress Region,
+  // insight vendor, angka navigasi Deployment, dan tabel Database LOP.
+  renderAll();
+  syncDeploymentKpiCards();
+  saveState();
+
+  const labels = {
+    ALL: 'seluruh node',
+    OVERDUE: 'Site ID Over Duedate ISP',
+    PORT_NUMERIC: 'node dengan nilai Port numerik',
+    ON_AIR: 'node Closed / Go-Live / On Air',
+    OPEN_LOP: 'Open LOP',
+    DROP_SITE: 'Drop Site'
+  };
+  showToast(`Filter aktif: ${labels[appState.dep.kpiFilter]}. Semua indikator, grafik, Progress Region, dan Database LOP telah diperbarui.`);
 }
 
 function setQuickChip(mod, q, el) {
@@ -2091,6 +2271,7 @@ function renderAll() {
 }
 
 function renderDeploymentModule(rows) {
+  syncDeploymentKpiCards();
   const totalNode = rows.length;
   const uniqueSites = new Set(rows.map(r => (r.site && r.site !== '#N/A') ? r.site : ('NODE-' + r.no))).size;
   const overdue = rows.filter(r => r.isOverdue).length;
@@ -3146,6 +3327,8 @@ async function saveState() {
     await window.notebookAppApi.setAppState({
       theme: appState.theme,
       module: appState.module,
+      deploymentKpiFilter: appState.dep.kpiFilter,
+      planningKpiFilter: appState.plan.kpiFilter,
       filtersByModule: appState.filtersByModule
     });
   }
@@ -3157,6 +3340,12 @@ async function initApp() {
     if (saved) {
       if (saved.theme === 'light' || saved.theme === 'dark') appState.theme = saved.theme;
       if (saved.module === 'deployment' || saved.module === 'planning') appState.module = saved.module;
+      if (['ALL', 'OVERDUE', 'PORT_NUMERIC', 'ON_AIR', 'OPEN_LOP', 'DROP_SITE'].includes(saved.deploymentKpiFilter)) {
+        appState.dep.kpiFilter = saved.deploymentKpiFilter;
+      }
+      if (['ALL', 'PORT_NUMERIC', 'READY', 'INCOMPLETE', 'READINESS', 'HOLD'].includes(saved.planningKpiFilter)) {
+        appState.plan.kpiFilter = saved.planningKpiFilter;
+      }
       if (saved.filtersByModule && typeof saved.filtersByModule === 'object') {
         ['deployment', 'planning'].forEach(mod => {
           if (saved.filtersByModule[mod]) {
