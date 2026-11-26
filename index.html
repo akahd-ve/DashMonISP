@@ -1184,6 +1184,83 @@
         scroll-behavior: auto !important;
       }
     }
+  
+
+    /* Tagging Progress ISP: kolom ringkas + modal catatan per SITE ID. */
+    .tagging-progress-cell { min-width: 172px; white-space: nowrap; }
+    .tagging-cell-inner { display: flex; align-items: center; gap: 6px; }
+    .tagging-history-select {
+      min-width: 112px; max-width: 126px; height: 31px; padding: 4px 8px;
+      border: 1px solid var(--outline-variant); border-radius: 8px;
+      background: var(--surface-container); color: var(--on-surface);
+      font: 600 0.72rem var(--font-label); cursor: pointer;
+    }
+    .tagging-history-select:disabled { opacity: .68; cursor: default; }
+    .tagging-edit-btn {
+      display: inline-grid; place-items: center; width: 31px; height: 31px; flex: 0 0 31px;
+      border: 1px solid color-mix(in srgb, var(--primary) 38%, var(--outline-variant));
+      border-radius: 8px; background: var(--cyan-tint); color: var(--primary); cursor: pointer;
+      transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+    }
+    .tagging-edit-btn:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--primary) 18%, transparent); box-shadow: 0 4px 14px color-mix(in srgb, var(--primary) 17%, transparent); }
+    .tagging-edit-btn svg { width: 15px; height: 15px; }
+    .tagging-modal-overlay {
+      position: fixed; inset: 0; z-index: 1500; display: none; align-items: center; justify-content: center;
+      padding: 22px; background: rgba(5, 10, 15, .62); backdrop-filter: blur(5px);
+    }
+    .tagging-modal-overlay.open { display: flex; animation: taggingBackdropIn 180ms ease-out both; }
+    .tagging-modal-card {
+      width: min(980px, 100%); max-height: min(92vh, 900px); overflow: auto;
+      border: 1px solid var(--outline-variant); border-radius: 18px;
+      background: var(--surface-container-low); color: var(--on-surface);
+      box-shadow: 0 24px 80px rgba(0,0,0,.34); animation: taggingModalIn 260ms cubic-bezier(.2,.75,.25,1) both;
+    }
+    .tagging-modal-head {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+      padding: 21px 24px 17px; border-bottom: 1px solid var(--outline-variant);
+    }
+    .tagging-modal-kicker { color: var(--on-surface-variant); font-size: .76rem; font-weight: 700; letter-spacing: .04em; }
+    .tagging-modal-title { margin: 3px 0 5px; font: 800 clamp(1.05rem, 2vw, 1.42rem) var(--font-headline); letter-spacing: -.02em; }
+    .tagging-modal-meta { color: var(--on-surface-variant); font-size: .78rem; line-height: 1.65; }
+    .tagging-modal-body { padding: 18px 24px 22px; }
+    .tagging-form-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 16px; }
+    .tagging-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .tagging-field label { color: var(--on-surface-variant); font-size: .73rem; font-weight: 700; }
+    .tagging-field input, .tagging-field select, .tagging-field textarea {
+      width: 100%; min-width: 0; border: 1px solid var(--outline-variant); border-radius: 10px;
+      background: var(--surface-container); color: var(--on-surface); padding: 10px 11px; outline: none;
+    }
+    .tagging-field input:focus, .tagging-field select:focus, .tagging-field textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 13%, transparent); }
+    .tagging-section-title { margin: 4px 0 9px; font-size: .82rem; font-weight: 800; }
+    .tagging-history-wrap { border: 1px solid var(--outline-variant); border-radius: 11px; overflow: auto; max-height: 238px; background: var(--surface-container); }
+    .tagging-history-table { width: 100%; min-width: 680px; border-collapse: collapse; font-size: .75rem; }
+    .tagging-history-table th { position: sticky; top: 0; z-index: 1; padding: 9px 10px; text-align: left; color: var(--on-surface-variant); background: var(--surface-container-high); font-size: .68rem; text-transform: uppercase; letter-spacing: .04em; }
+    .tagging-history-table td { padding: 9px 10px; border-top: 1px solid var(--outline-variant); vertical-align: top; }
+    .tagging-history-table tbody tr { cursor: pointer; transition: background 140ms ease; }
+    .tagging-history-table tbody tr:hover { background: var(--cyan-tint); }
+    .tagging-history-table tbody tr.selected { background: var(--cyan-tint); outline: 1px solid color-mix(in srgb, var(--primary) 38%, transparent); outline-offset: -1px; }
+    .tagging-note-field { margin-top: 15px; }
+    .tagging-note-field textarea { min-height: 82px; resize: vertical; }
+    .tagging-storage-note { margin-top: 9px; color: var(--on-surface-variant); font-size: .7rem; }
+    .tagging-modal-foot {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 9px;
+      padding: 14px 24px 19px; border-top: 1px solid var(--outline-variant);
+    }
+    .tagging-modal-foot-left, .tagging-modal-foot-right { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+    @keyframes taggingBackdropIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes taggingModalIn { from { opacity: 0; transform: translateY(12px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @media (max-width: 760px) {
+      .tagging-modal-overlay { padding: 9px; align-items: flex-end; }
+      .tagging-modal-card { max-height: 94vh; border-radius: 16px 16px 10px 10px; }
+      .tagging-modal-head, .tagging-modal-body { padding-left: 15px; padding-right: 15px; }
+      .tagging-modal-foot { padding-left: 15px; padding-right: 15px; }
+      .tagging-form-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 420px) { .tagging-form-grid { grid-template-columns: 1fr; } }
+    @media (prefers-reduced-motion: reduce) {
+      .tagging-modal-overlay.open, .tagging-modal-card, .tagging-edit-btn { animation: none !important; transition: none !important; }
+    }
+
   </style>
 </head>
 <body>
@@ -1419,6 +1496,7 @@
                 <th class="sortable" onclick="sortTable('dep','port')">Port ↕</th>
                 <th class="sortable" onclick="sortTable('dep','sto')">STO ↕</th>
                 <th class="sortable" onclick="sortTable('dep','site')">Site ID ↕</th>
+                <th>Tagging Progress</th>
                 <th class="sortable" onclick="sortTable('dep','osp')">Status OSP ↕</th>
                 <th class="sortable" onclick="sortTable('dep','prio')">Prioritas ↕</th>
                 <th class="sortable" onclick="sortTable('dep','type')">Type Req ↕</th>
@@ -1706,6 +1784,80 @@ Anda dapat bertanya seputar <strong>cara kerja fitur &amp; filter di halaman web
     </form>
   </div>
 </div>
+
+
+
+<!-- MODAL TAGGING PROGRESS ISP PER SITE ID -->
+<div class="tagging-modal-overlay" id="taggingProgressModal" role="dialog" aria-modal="true" aria-labelledby="taggingModalTitle" onclick="handleTaggingBackdrop(event)">
+  <div class="tagging-modal-card" role="document" onclick="event.stopPropagation()">
+    <div class="tagging-modal-head">
+      <div>
+        <div class="tagging-modal-kicker">TAGGING PROGRESS · ISP DEPLOYMENT</div>
+        <h3 class="tagging-modal-title" id="taggingModalTitle">Tagging Progress ISP</h3>
+        <div class="tagging-modal-meta" id="taggingModalMeta">SITE ID · REGION · LOP</div>
+      </div>
+      <button type="button" class="btn-reset" onclick="closeTaggingModal()" aria-label="Tutup Tagging Progress"><i data-lucide="x" width="18" height="18"></i></button>
+    </div>
+    <div class="tagging-modal-body">
+      <div class="tagging-form-grid">
+        <div class="tagging-field">
+          <label for="taggingDateInput">Tanggal Update</label>
+          <input type="date" id="taggingDateInput">
+        </div>
+        <div class="tagging-field">
+          <label for="taggingStatusInput">Status Progress ISP</label>
+          <select id="taggingStatusInput">
+            <option value="BELUM MULAI">Belum Mulai</option>
+            <option value="DONE SURVEY">Done Survey</option>
+            <option value="AANWIJZING">Aanwijzing</option>
+            <option value="DELIVERY">Material Delivery</option>
+            <option value="MATERIAL ONSITE">Material Onsite</option>
+            <option value="INSTALASI">Instalasi</option>
+            <option value="POWER ON">Power On</option>
+            <option value="ON AIR">ON AIR / Go-Live</option>
+            <option value="KENDALA / HOLD">Kendala / Hold</option>
+            <option value="DROP SITE">Drop Site</option>
+          </select>
+        </div>
+        <div class="tagging-field">
+          <label for="taggingPercentInput">Progress (%)</label>
+          <input type="number" id="taggingPercentInput" min="0" max="100" step="1" value="0" inputmode="numeric">
+        </div>
+        <div class="tagging-field">
+          <label for="taggingPicInput">PIC / Vendor</label>
+          <input type="text" id="taggingPicInput" maxlength="100" placeholder="Nama PIC / Vendor">
+        </div>
+      </div>
+
+      <div class="tagging-section-title">Riwayat Tagging Progress</div>
+      <div class="tagging-history-wrap">
+        <table class="tagging-history-table">
+          <thead><tr><th>Tanggal</th><th>Status ISP</th><th>Progress</th><th>PIC / Vendor</th><th>Catatan</th></tr></thead>
+          <tbody id="taggingHistoryBody"><tr><td colspan="5" style="color:var(--on-surface-variant);text-align:center;">Belum ada riwayat update.</td></tr></tbody>
+        </table>
+      </div>
+
+      <div class="tagging-field tagging-note-field">
+        <label for="taggingNoteInput">Catatan Progress / Kendala</label>
+        <textarea id="taggingNoteInput" maxlength="2000" placeholder="Tuliskan update pekerjaan ISP, kebutuhan material, kendala lapangan, atau rencana tindak lanjut..."></textarea>
+      </div>
+      <div class="tagging-storage-note">Riwayat disimpan berdasarkan SITE ID, bukan nomor baris CSV. Gunakan Backup / Pulihkan untuk memindahkan catatan saat memakai file dashboard versi baru atau browser lain.</div>
+    </div>
+    <div class="tagging-modal-foot">
+      <div class="tagging-modal-foot-left">
+        <button type="button" class="btn-reset" onclick="taggingNewEntry()"><i data-lucide="plus" width="14" height="14"></i> Update Baru</button>
+        <button type="button" class="btn-reset" onclick="downloadTaggingBackup()"><i data-lucide="download" width="14" height="14"></i> Backup</button>
+        <button type="button" class="btn-reset" onclick="document.getElementById('taggingBackupFileInput').click()"><i data-lucide="upload" width="14" height="14"></i> Pulihkan</button>
+        <input type="file" id="taggingBackupFileInput" accept="application/json,.json" hidden onchange="importTaggingBackup(event)">
+      </div>
+      <div class="tagging-modal-foot-right">
+        <button type="button" class="btn-reset" onclick="closeTaggingModal()">Tutup</button>
+        <button type="button" class="btn-primary-action" onclick="saveTaggingProgress()"><i data-lucide="save" width="15" height="15"></i>Simpan Progress</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <!-- TOAST NOTIFICATION -->
 <div class="toast-banner" id="toastBanner" role="status" aria-live="polite">
@@ -3072,6 +3224,274 @@ function renderPlanRegionChart(rows) {
 /* ============================================================================
    7. RENDER TABEL DATABASE LOP & DETAIL INSPECTOR
    ============================================================================ */
+
+/* ============================================================================
+   TAGGING PROGRESS ISP — RIWAYAT PERSISTEN BERDASARKAN SITE ID
+   ============================================================================ */
+const TAGGING_STORAGE_KEY = 'akahd-visual-editor.isp-tagging-progress.v1';
+let taggingProgressStore = loadTaggingProgressStore();
+let activeTaggingContext = null;
+let activeTaggingEntryId = null;
+
+function loadTaggingProgressStore() {
+  try {
+    const raw = window.localStorage.getItem(TAGGING_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+  } catch (_) { return {}; }
+}
+
+function persistTaggingProgressStore(writeLocal = true) {
+  let savedLocal = false;
+  if (writeLocal) {
+    try {
+      window.localStorage.setItem(TAGGING_STORAGE_KEY, JSON.stringify(taggingProgressStore));
+      savedLocal = true;
+    } catch (_) { /* Notebook app state below is used when available. */ }
+  }
+  if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === 'function') {
+    saveState();
+  }
+  return savedLocal;
+}
+
+function taggingIdentityForRecord(row) {
+  const siteId = String(row.site || '').trim().toUpperCase().replace(/\s+/g, ' ');
+  if (siteId && siteId !== '#N/A' && siteId !== 'N/A') return `SITE:${siteId}`;
+  const lop = String(row.lop || '').trim().toUpperCase().replace(/\s+/g, ' ');
+  if (lop) return `LOP:${String(row.reg || '').trim().toUpperCase()}|${lop}`;
+  return `ROW:${String(row.reg || '').trim().toUpperCase()}|${String(row.no || '')}`;
+}
+
+function getTaggingEntries(rowOrKey) {
+  const key = typeof rowOrKey === 'string' ? rowOrKey : taggingIdentityForRecord(rowOrKey);
+  const bucket = taggingProgressStore[key];
+  return bucket && Array.isArray(bucket.updates)
+    ? bucket.updates.slice().sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || String(b.savedAt || '').localeCompare(String(a.savedAt || '')))
+    : [];
+}
+
+function formatTaggingDate(dateValue) {
+  const match = String(dateValue || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return match ? `${match[3]} ${match[2]} ${match[1].slice(-2)}` : '-- -- --';
+}
+
+function localTodayISO() {
+  const now = new Date();
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 10);
+}
+
+function renderTaggingProgressCell(row) {
+  const key = taggingIdentityForRecord(row);
+  const entries = getTaggingEntries(key);
+  const options = entries.length
+    ? entries.map((entry, index) => `<option value="${escapeHtml(entry.id)}" ${index === 0 ? 'selected' : ''}>${formatTaggingDate(entry.date)}</option>`).join('')
+    : '<option value="">Belum ada</option>';
+  return `<td class="tagging-progress-cell"><div class="tagging-cell-inner">
+    <select class="tagging-history-select" aria-label="Riwayat Tagging Progress ${escapeHtml(row.site || row.lop || '')}" ${entries.length ? '' : 'disabled'}>${options}</select>
+    <button type="button" class="tagging-edit-btn" aria-label="Edit Tagging Progress ${escapeHtml(row.site || row.lop || '')}" title="Tambah / edit Tagging Progress"><i data-lucide="pencil"></i></button>
+  </div></td>`;
+}
+
+function renderTaggingHistory() {
+  const body = document.getElementById('taggingHistoryBody');
+  if (!body || !activeTaggingContext) return;
+  const entries = getTaggingEntries(activeTaggingContext.key);
+  body.innerHTML = '';
+  if (!entries.length) {
+    body.innerHTML = '<tr><td colspan="5" style="color:var(--on-surface-variant);text-align:center;">Belum ada riwayat update. Isi form untuk membuat tagging pertama.</td></tr>';
+    return;
+  }
+  entries.forEach(entry => {
+    const tr = document.createElement('tr');
+    tr.classList.toggle('selected', entry.id === activeTaggingEntryId);
+    const values = [formatTaggingDate(entry.date), entry.status || '—', `${Number(entry.progress) || 0}%`, entry.pic || '—', entry.note || '—'];
+    values.forEach(value => {
+      const td = document.createElement('td');
+      td.textContent = value;
+      tr.appendChild(td);
+    });
+    tr.title = 'Klik untuk memuat update ini ke form';
+    tr.addEventListener('click', () => loadTaggingEntry(entry.id));
+    body.appendChild(tr);
+  });
+}
+
+function fillTaggingForm(entry) {
+  const dateInput = document.getElementById('taggingDateInput');
+  const statusInput = document.getElementById('taggingStatusInput');
+  const percentInput = document.getElementById('taggingPercentInput');
+  const picInput = document.getElementById('taggingPicInput');
+  const noteInput = document.getElementById('taggingNoteInput');
+  if (!dateInput || !statusInput || !percentInput || !picInput || !noteInput) return;
+  dateInput.value = entry?.date || localTodayISO();
+  const allowedStatus = Array.from(statusInput.options).some(option => option.value === entry?.status);
+  statusInput.value = allowedStatus ? entry.status : 'BELUM MULAI';
+  percentInput.value = Number.isFinite(Number(entry?.progress)) ? Math.max(0, Math.min(100, Number(entry.progress))) : 0;
+  picInput.value = entry?.pic || '';
+  noteInput.value = entry?.note || '';
+}
+
+function loadTaggingEntry(entryId) {
+  if (!activeTaggingContext) return;
+  const entry = getTaggingEntries(activeTaggingContext.key).find(item => item.id === entryId);
+  if (!entry) return;
+  activeTaggingEntryId = entry.id;
+  fillTaggingForm(entry);
+  renderTaggingHistory();
+}
+
+function openTaggingModal(row, selectedEntryId = null) {
+  const modal = document.getElementById('taggingProgressModal');
+  if (!modal) return;
+  const key = taggingIdentityForRecord(row);
+  activeTaggingContext = {
+    key,
+    siteId: String(row.site || '').trim(),
+    lop: String(row.lop || '').trim(),
+    region: String(row.reg || '').trim(),
+    row
+  };
+  const title = document.getElementById('taggingModalTitle');
+  const meta = document.getElementById('taggingModalMeta');
+  if (title) title.textContent = row.lop || row.site || 'Tagging Progress ISP';
+  if (meta) meta.textContent = `SITE ID: ${row.site || 'Belum tersedia'} · ${row.reg || 'Region —'} · Progress ISP: ${row.prog || '—'} · Port: ${row.port || 0}`;
+  const entries = getTaggingEntries(key);
+  const target = selectedEntryId && entries.some(item => item.id === selectedEntryId)
+    ? selectedEntryId
+    : (entries[0]?.id || null);
+  if (target) loadTaggingEntry(target);
+  else taggingNewEntry();
+  renderTaggingHistory();
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons();
+  const focusTarget = document.getElementById('taggingDateInput');
+  if (focusTarget) focusTarget.focus();
+  scheduleActivityMotion('deployment');
+}
+
+function taggingNewEntry() {
+  if (!activeTaggingContext) return;
+  activeTaggingEntryId = null;
+  const currentStatus = String(activeTaggingContext.row?.prog || '').trim().toUpperCase();
+  const statusInput = document.getElementById('taggingStatusInput');
+  fillTaggingForm({ date: localTodayISO(), status: currentStatus, progress: 0, pic: '', note: '' });
+  if (statusInput && !Array.from(statusInput.options).some(option => option.value === currentStatus)) {
+    statusInput.value = 'BELUM MULAI';
+  }
+  renderTaggingHistory();
+  const noteInput = document.getElementById('taggingNoteInput');
+  if (noteInput) noteInput.focus();
+}
+
+function saveTaggingProgress() {
+  if (!activeTaggingContext) return;
+  const date = document.getElementById('taggingDateInput')?.value || '';
+  const status = document.getElementById('taggingStatusInput')?.value || 'BELUM MULAI';
+  const rawProgress = Number(document.getElementById('taggingPercentInput')?.value);
+  const progress = Number.isFinite(rawProgress) ? Math.max(0, Math.min(100, Math.round(rawProgress))) : 0;
+  const pic = String(document.getElementById('taggingPicInput')?.value || '').trim();
+  const note = String(document.getElementById('taggingNoteInput')?.value || '').trim();
+  if (!date) { showToast('Tanggal update wajib diisi.'); return; }
+  if (!note) { showToast('Isi catatan progress atau kendala sebelum disimpan.'); return; }
+
+  const key = activeTaggingContext.key;
+  if (!taggingProgressStore[key] || typeof taggingProgressStore[key] !== 'object') {
+    taggingProgressStore[key] = { siteId: activeTaggingContext.siteId, lop: activeTaggingContext.lop, region: activeTaggingContext.region, updates: [] };
+  }
+  const bucket = taggingProgressStore[key];
+  if (!Array.isArray(bucket.updates)) bucket.updates = [];
+  const savedAt = new Date().toISOString();
+  const existingIndex = activeTaggingEntryId ? bucket.updates.findIndex(item => item.id === activeTaggingEntryId) : -1;
+  const entry = {
+    id: activeTaggingEntryId || `tag-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    date, status, progress, pic, note, savedAt
+  };
+  if (existingIndex >= 0) bucket.updates[existingIndex] = entry;
+  else bucket.updates.push(entry);
+  bucket.siteId = activeTaggingContext.siteId || bucket.siteId || '';
+  bucket.lop = activeTaggingContext.lop || bucket.lop || '';
+  bucket.region = activeTaggingContext.region || bucket.region || '';
+  activeTaggingEntryId = entry.id;
+
+  const notebookPersistAvailable = window.notebookAppApi && typeof window.notebookAppApi.setAppState === 'function';
+  const persisted = persistTaggingProgressStore(true);
+  renderTaggingHistory();
+  renderTable('dep');
+  if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons();
+  showToast(persisted || notebookPersistAvailable ? 'Tagging Progress tersimpan berdasarkan SITE ID.' : 'Tagging tersimpan pada sesi ini; penyimpanan browser tidak tersedia.');
+}
+
+function downloadTaggingBackup() {
+  const payload = {
+    app: 'Akahd Visual Editor · ISP Tagging Progress',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    records: taggingProgressStore
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `backup_tagging_progress_isp_${localTodayISO()}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  showToast('Backup Tagging Progress berhasil diunduh.');
+}
+
+function importTaggingBackup(event) {
+  const file = event.target?.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(String(reader.result || '{}'));
+      const incoming = parsed && parsed.records && typeof parsed.records === 'object' ? parsed.records : parsed;
+      if (!incoming || typeof incoming !== 'object' || Array.isArray(incoming)) throw new Error('Format backup tidak valid.');
+      Object.entries(incoming).forEach(([key, value]) => {
+        if (!value || typeof value !== 'object' || !Array.isArray(value.updates)) return;
+        const current = taggingProgressStore[key] || { ...value, updates: [] };
+        if (!Array.isArray(current.updates)) current.updates = [];
+        const byId = new Map(current.updates.map(item => [item.id, item]));
+        value.updates.forEach(item => {
+          if (item && item.id) byId.set(item.id, item);
+        });
+        taggingProgressStore[key] = { ...value, ...current, updates: Array.from(byId.values()) };
+      });
+      persistTaggingProgressStore(true);
+      if (activeTaggingContext) renderTaggingHistory();
+      renderTable('dep');
+      showToast('Backup berhasil dipulihkan dan dicocokkan berdasarkan SITE ID.');
+    } catch (error) {
+      showToast(error && error.message ? error.message : 'Backup gagal dibaca.');
+    } finally {
+      if (event.target) event.target.value = '';
+    }
+  };
+  reader.onerror = () => {
+    showToast('File backup tidak dapat dibaca.');
+    if (event.target) event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function closeTaggingModal() {
+  const modal = document.getElementById('taggingProgressModal');
+  if (modal) modal.classList.remove('open');
+  document.body.style.overflow = '';
+  activeTaggingContext = null;
+  activeTaggingEntryId = null;
+}
+
+function handleTaggingBackdrop(event) {
+  if (event.target && event.target.id === 'taggingProgressModal') closeTaggingModal();
+}
+
 function renderTable(mod) {
   const state = appState[mod];
   const targetMod = mod === 'dep' ? 'deployment' : 'planning';
@@ -3136,7 +3556,7 @@ function renderTable(mod) {
   tbody.innerHTML = '';
 
   if (slice.length === 0) {
-    const colSpan = mod === 'dep' ? 16 : 11;
+    const colSpan = mod === 'dep' ? 17 : 11;
     tbody.innerHTML = `<tr><td colspan="${colSpan}" class="empty-state">Tidak ada data LOP yang sesuai dengan filter. Klik <strong>Reset Filter</strong> di sidebar untuk menampilkan semua data.</td></tr>`;
   } else if (mod === 'dep') {
     slice.forEach(r => {
@@ -3153,6 +3573,7 @@ function renderTable(mod) {
         <td class="td-mono">${r.port || '—'}</td>
         <td class="td-mono">${escapeHtml(r.sto)}</td>
         <td class="td-mono">${escapeHtml(r.site || '—')}</td>
+        ${renderTaggingProgressCell(r)}
         <td>${escapeHtml(r.osp || '—')}</td>
         <td>${escapeHtml(r.prio)}</td>
         <td>${escapeHtml(r.type)}</td>
@@ -3161,8 +3582,17 @@ function renderTable(mod) {
         <td class="td-mono">${r.isOverdue ? '<span style="color:var(--error);font-weight:700;">' + escapeHtml(r.due) + '</span>' : escapeHtml(r.due || '—')}</td>
         <td><div class="td-remarks" title="${escapeHtml(r.rem)}">${escapeHtml(r.rem || '—')}</div></td>
       `;
+      const taggingCell = tr.querySelector('.tagging-progress-cell');
+      const taggingSelect = taggingCell?.querySelector('.tagging-history-select');
+      const taggingEdit = taggingCell?.querySelector('.tagging-edit-btn');
+      if (taggingSelect) taggingSelect.addEventListener('click', event => event.stopPropagation());
+      if (taggingEdit) taggingEdit.addEventListener('click', event => {
+        event.stopPropagation();
+        openTaggingModal(r, taggingSelect?.value || null);
+      });
       tbody.appendChild(tr);
     });
+    if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons();
   } else {
     slice.forEach(r => {
       const tr = document.createElement('tr');
@@ -3489,8 +3919,31 @@ async function saveState() {
       module: appState.module,
       deploymentKpiFilter: appState.dep.kpiFilter,
       planningKpiFilter: appState.plan.kpiFilter,
-      filtersByModule: appState.filtersByModule
+      filtersByModule: appState.filtersByModule,
+      taggingProgress: taggingProgressStore
     });
+  }
+}
+
+
+function configureChartMotion() {
+  if (typeof Chart === 'undefined') return;
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) {
+    Chart.defaults.animation = false;
+    return;
+  }
+  // Line, doughnut, horizontal bar, dan vertical bar memakai gerakan pembuka yang sama.
+  // Delay kecil per data membuat chart terasa hidup tanpa mengubah nilai maupun skala.
+  Chart.defaults.animation = {
+    duration: 1380,
+    easing: 'easeOutQuart',
+    delay: context => context && context.type === 'data' && context.mode === 'default'
+      ? (Number(context.dataIndex) || 0) * 38 + (Number(context.datasetIndex) || 0) * 65
+      : 0
+  };
+  if (Chart.defaults.transitions?.active?.animation) {
+    Chart.defaults.transitions.active.animation.duration = 320;
   }
 }
 
@@ -3506,7 +3959,11 @@ async function initApp() {
       if (['ALL', 'PORT_NUMERIC', 'READY', 'INCOMPLETE', 'READINESS', 'HOLD'].includes(saved.planningKpiFilter)) {
         appState.plan.kpiFilter = saved.planningKpiFilter;
       }
-      if (saved.filtersByModule && typeof saved.filtersByModule === 'object') {
+      if (saved.taggingProgress && typeof saved.taggingProgress === 'object' && !Array.isArray(saved.taggingProgress)) {
+      taggingProgressStore = { ...saved.taggingProgress, ...taggingProgressStore };
+      persistTaggingProgressStore(true);
+    }
+    if (saved.filtersByModule && typeof saved.filtersByModule === 'object') {
         ['deployment', 'planning'].forEach(mod => {
           if (saved.filtersByModule[mod]) {
             Object.keys(appState.filtersByModule[mod]).forEach(k => {
@@ -3519,6 +3976,7 @@ async function initApp() {
       }
     }
   }
+  configureChartMotion();
   applyTheme();
   switchModule(appState.module);
   if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons();
@@ -3533,6 +3991,13 @@ document.addEventListener('toggle', event => {
     scheduleActivityMotion();
   }
 }, true);
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    const modal = document.getElementById('taggingProgressModal');
+    if (modal && modal.classList.contains('open')) closeTaggingModal();
+  }
+});
 
 document.addEventListener('DOMContentLoaded', initApp);
 </script>
