@@ -839,6 +839,12 @@
     .plan-insight-tag.need { background: var(--sage-tint); color: var(--tertiary); }
     .plan-insight-tag.existing { background: var(--surface-container-high); color: var(--on-surface-variant); }
     .plan-priority-chart { position: relative; width: 100%; min-height: 245px; height: 245px; }
+    /* Kursor dan tooltip chart dibuat konsisten pada kedua modul. */
+    .chart-box canvas, .chart-box-sm canvas, .insight-chart-box canvas,
+    .insight-donut-wrap canvas, .donut-wrap canvas, .plan-priority-chart canvas {
+      cursor: crosshair;
+      touch-action: pan-y;
+    }
     .plan-need-note { margin: 0; padding: 9px 11px; border-radius: var(--rounded); background: var(--background); border: var(--hairline); color: var(--on-surface-variant); font-size: 0.73rem; line-height: 1.5; }
     .plan-insight-empty { padding: 20px; text-align: center; color: var(--on-surface-variant); font-size: 0.82rem; }
 
@@ -2642,7 +2648,7 @@ function renderSCurveChart(rows) {
   const txt = cssVar('--on-surface-variant');
   const grid = cssVar('--outline-variant');
 
-  chartSCurve = new Chart(ctxEl, {
+  chartSCurve = createIspChart(ctxEl, {
     type: 'line',
     data: {
       labels: months.map(m => m + ' 26'),
@@ -2654,6 +2660,8 @@ function renderSCurveChart(rows) {
       ]
     },
     options: {
+      animation: getChartMotionOptions(), // line: animasi eksplisit per chart
+
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { position: 'top', labels: { color: txt, boxWidth: 12, font: { family: 'Geist Mono', size: 11 } } } },
@@ -2678,7 +2686,7 @@ function renderDepDonutChart(rows) {
   }));
 
   if (chartDepDonut) chartDepDonut.destroy();
-  chartDepDonut = new Chart(ctxEl, {
+  chartDepDonut = createIspChart(ctxEl, {
     type: 'doughnut',
     data: {
       labels: counts.map(c => c.label),
@@ -2690,6 +2698,8 @@ function renderDepDonutChart(rows) {
       }]
     },
     options: {
+      animation: getChartMotionOptions(), // doughnut: animasi eksplisit per chart
+
       responsive: true,
       maintainAspectRatio: false,
       cutout: '66%',
@@ -2741,7 +2751,7 @@ function renderRegionSubCharts(rows) {
 
     const canvas = document.getElementById('chartReg-' + reg);
     const shortCats = PROGRESS_DISPLAY.filter(p => rRows.some(x => x.prog === p.key) || ['ON AIR', 'POWER ON', 'AANWIJZING', 'DONE SURVEY'].includes(p.key));
-    chartRegionSub[reg] = new Chart(canvas, {
+    chartRegionSub[reg] = createIspChart(canvas, {
       type: 'bar',
       data: {
         labels: shortCats.map(p => p.label.replace('Material Delivery (Onsite)', 'Mat. Onsite').replace('Done Integrasi / GoLive', 'GoLive')),
@@ -2752,6 +2762,8 @@ function renderRegionSubCharts(rows) {
         }]
       },
       options: {
+      animation: getChartMotionOptions(), // bar: animasi eksplisit per chart
+
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
@@ -2812,7 +2824,7 @@ function renderTypeMixChart(rows) {
 
   if (typeof Chart === 'undefined') return;
   if (chartTypeMix) chartTypeMix.destroy();
-  chartTypeMix = new Chart(canvas, {
+  chartTypeMix = createIspChart(canvas, {
     type: 'doughnut',
     data: {
       labels: counts.map(item => item.label),
@@ -2825,6 +2837,8 @@ function renderTypeMixChart(rows) {
       }]
     },
     options: {
+      animation: getChartMotionOptions(), // doughnut: animasi eksplisit per chart
+
       responsive: true,
       maintainAspectRatio: false,
       cutout: '68%',
@@ -2883,7 +2897,7 @@ function renderVendorProgressChart(rows) {
   if (chartVendorProgress) chartVendorProgress.destroy();
   const txt = cssVar('--on-surface-variant');
   const grid = cssVar('--outline-variant');
-  chartVendorProgress = new Chart(canvas, {
+  chartVendorProgress = createIspChart(canvas, {
     type: 'bar',
     data: {
       labels: metrics.map(item => `${item.label} • ${item.total.toLocaleString('id-ID')} total`),
@@ -2909,6 +2923,8 @@ function renderVendorProgressChart(rows) {
       ]
     },
     options: {
+      animation: getChartMotionOptions(), // bar: animasi eksplisit per chart
+
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
@@ -3077,7 +3093,7 @@ function renderPlanningNeedVsPriorityChart(candidates) {
   if (badge) badge.textContent = `${candidates.length.toLocaleString('id-ID')} LOP kandidat`;
 
   if (canvas && typeof Chart !== 'undefined') {
-    chartPlanNeedVsPriority = new Chart(canvas, {
+    chartPlanNeedVsPriority = createIspChart(canvas, {
       type: 'bar',
       data: {
         labels: catalog.map(item => item.label),
@@ -3103,6 +3119,8 @@ function renderPlanningNeedVsPriorityChart(candidates) {
         ]
       },
       options: {
+      animation: getChartMotionOptions(), // bar: animasi eksplisit per chart
+
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
@@ -3149,13 +3167,15 @@ function renderPlanDonut(ready, incomplete, pctStr) {
   const cReady = cssVar('--data-2');
   const cInc = cssVar('--data-3');
   if (chartPlanDonut) chartPlanDonut.destroy();
-  chartPlanDonut = new Chart(ctxEl, {
+  chartPlanDonut = createIspChart(ctxEl, {
     type: 'doughnut',
     data: {
       labels: ['Lengkap (Ready Go Deploy)', 'Belum Lengkap (Incomplete)'],
       datasets: [{ data: [ready, incomplete], backgroundColor: [cReady, cInc], borderWidth: 1.5, borderColor: cssVar('--surface-container-low') }]
     },
-    options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { display: false } } }
+    options: {
+      animation: getChartMotionOptions(), // doughnut: animasi eksplisit per chart
+ responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { display: false } } }
   });
   legendEl.innerHTML = `
     <div class="legend-item"><span class="legend-left"><span class="legend-dot" style="background:${cReady};"></span><span>Lengkap (Ready Go Deploy)</span></span><span class="legend-val">${ready} LOP</span></div>
@@ -3200,7 +3220,7 @@ function renderPlanRegionChart(rows) {
   if (chartPlanRegion) chartPlanRegion.destroy();
   const txt = cssVar('--on-surface-variant');
   const grid = cssVar('--outline-variant');
-  chartPlanRegion = new Chart(ctxEl, {
+  chartPlanRegion = createIspChart(ctxEl, {
     type: 'bar',
     data: {
       labels: regs,
@@ -3210,6 +3230,8 @@ function renderPlanRegionChart(rows) {
       ]
     },
     options: {
+      animation: getChartMotionOptions(), // bar: animasi eksplisit per chart
+
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { position: 'top', labels: { color: txt, boxWidth: 12, font: { family: 'Geist Mono', size: 11 } } } },
@@ -3926,25 +3948,223 @@ async function saveState() {
 }
 
 
+function getChartMotionOptions() {
+  // Animasi interpolasi native Chart.js untuk koordinat, ukuran, dan arc data.
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const duration = reduceMotion ? 520 : 1480;
+  const stagger = reduceMotion ? 0 : 24;
+  return {
+    duration,
+    easing: 'easeOutQuart',
+    delay: context => {
+      if (!context || context.type !== 'data') return 0;
+      const dataDelay = (Number(context.dataIndex) || 0) * stagger;
+      const seriesDelay = (Number(context.datasetIndex) || 0) * (reduceMotion ? 0 : 54);
+      return Math.min(dataDelay + seriesDelay, reduceMotion ? 0 : 480);
+    }
+  };
+}
+
 function configureChartMotion() {
   if (typeof Chart === 'undefined') return;
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduceMotion) {
-    Chart.defaults.animation = false;
-    return;
-  }
-  // Line, doughnut, horizontal bar, dan vertical bar memakai gerakan pembuka yang sama.
-  // Delay kecil per data membuat chart terasa hidup tanpa mengubah nilai maupun skala.
-  Chart.defaults.animation = {
-    duration: 1380,
-    easing: 'easeOutQuart',
-    delay: context => context && context.type === 'data' && context.mode === 'default'
-      ? (Number(context.dataIndex) || 0) * 38 + (Number(context.datasetIndex) || 0) * 65
-      : 0
+  const duration = reduceMotion ? 520 : 1480;
+  const motionOptions = getChartMotionOptions();
+  const tooltipDuration = reduceMotion ? 80 : 210;
+
+  // Setelan global Chart.js: pointer selalu memilih titik/seri terdekat di area plot.
+  Chart.defaults.animation = { ...motionOptions };
+  // Konfigurasi ringan: hanya elemen dalam area chart yang ikut dihitung.
+  Chart.defaults.interaction = {
+    ...(Chart.defaults.interaction || {}),
+    mode: 'index',
+    intersect: false,
+    includeInvisible: false
   };
-  if (Chart.defaults.transitions?.active?.animation) {
-    Chart.defaults.transitions.active.animation.duration = 320;
+  Chart.defaults.plugins = Chart.defaults.plugins || {};
+  Chart.defaults.plugins.tooltip = Chart.defaults.plugins.tooltip || {};
+  Object.assign(Chart.defaults.plugins.tooltip, {
+    enabled: true,
+    mode: 'index',
+    intersect: false,
+    displayColors: true,
+    caretPadding: 8,
+    padding: 10,
+    cornerRadius: 9,
+    // Transisi singkat menghindari animasi tooltip yang terus dimulai ulang
+    // setiap mousemove, tetapi tetap terasa halus.
+    animation: { duration: tooltipDuration, easing: 'easeOutQuart' },
+    callbacks: {
+      ...(Chart.defaults.plugins.tooltip.callbacks || {}),
+      title: items => {
+        const item = items && items[0];
+        return item ? (item.label || item.chart?.data?.datasets?.[item.datasetIndex]?.label || 'Detail') : '';
+      },
+      label: context => {
+        const raw = context && context.raw;
+        const value = typeof raw === 'number'
+          ? raw.toLocaleString('id-ID')
+          : (context && context.formattedValue != null ? context.formattedValue : String(raw ?? '—'));
+        const series = context && context.dataset && context.dataset.label;
+        return ` ${series || 'Nilai'}: ${value}`;
+      }
+    }
+  });
+
+  // Interaksi donut ditetapkan pada factory per-chart, bukan melalui override
+  // global Chart.js, agar tidak memengaruhi chart tipe lain.
+
+  // Reveal plugin: membuat gerakan tetap terlihat meski browser mempercepat
+  // atau melewatkan animasi native Chart.js. Garis dibuka kiri-ke-kanan,
+  // batang horizontal dari kiri, batang vertikal dari bawah, dan donut menyapu.
+  if (!window.__ispProgressiveChartRevealRegistered) {
+    const revealPlugin = {
+      id: 'ispProgressiveChartReveal',
+      afterInit(chart) {
+        const stagger = reduceMotion ? 0 : ((Number(chart.id) || 0) % 5) * 82;
+        const state = {
+          startedAt: null,
+          delay: stagger,
+          duration,
+          done: false,
+          clipApplied: false,
+          frame: null
+        };
+        chart.$ispProgressReveal = state;
+
+        const tick = timestamp => {
+          if (!chart.canvas || !chart.ctx) return;
+          if (state.startedAt === null) state.startedAt = timestamp;
+          const elapsed = timestamp - state.startedAt - state.delay;
+          chart.draw();
+          if (elapsed < state.duration) {
+            state.frame = window.requestAnimationFrame(tick);
+          } else {
+            state.done = true;
+            state.frame = null;
+            chart.draw();
+          }
+        };
+        state.frame = window.requestAnimationFrame(tick);
+      },
+      beforeDatasetsDraw(chart) {
+        const state = chart.$ispProgressReveal;
+        const area = chart.chartArea;
+        if (!state || state.done || !area || !chart.ctx || state.startedAt === null) return;
+
+        const elapsed = performance.now() - state.startedAt - state.delay;
+        const rawProgress = Math.max(0, Math.min(1, elapsed / state.duration));
+        const progress = 1 - Math.pow(1 - rawProgress, 3.2);
+        const ctx = chart.ctx;
+        const width = Math.max(0, area.right - area.left);
+        const height = Math.max(0, area.bottom - area.top);
+        ctx.save();
+        state.clipApplied = true;
+
+        const chartType = chart.config && chart.config.type;
+        if (chartType === 'doughnut' || chartType === 'pie' || chartType === 'polarArea') {
+          const firstMeta = chart.getDatasetMeta(0);
+          const firstArc = firstMeta && firstMeta.data && firstMeta.data[0];
+          const cx = firstArc && Number.isFinite(firstArc.x) ? firstArc.x : area.left + width / 2;
+          const cy = firstArc && Number.isFinite(firstArc.y) ? firstArc.y : area.top + height / 2;
+          const radius = Math.hypot(width, height) * 1.15;
+          const startAngle = -Math.PI / 2;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.arc(cx, cy, radius, startAngle, startAngle + (Math.PI * 2 * progress), false);
+          ctx.closePath();
+          ctx.clip();
+        } else if (chart.options && chart.options.indexAxis === 'y') {
+          ctx.beginPath();
+          ctx.rect(area.left, area.top, width * progress, height);
+          ctx.clip();
+        } else {
+          ctx.beginPath();
+          ctx.rect(area.left, area.bottom - (height * progress), width, height * progress);
+          ctx.clip();
+        }
+      },
+      afterDatasetsDraw(chart) {
+        const state = chart.$ispProgressReveal;
+        if (state && state.clipApplied && chart.ctx) {
+          chart.ctx.restore();
+          state.clipApplied = false;
+        }
+      },
+      afterDestroy(chart) {
+        const state = chart.$ispProgressReveal;
+        if (state && state.frame !== null) window.cancelAnimationFrame(state.frame);
+        chart.$ispProgressReveal = null;
+      }
+    };
+
+    Chart.register(revealPlugin);
+    window.__ispProgressiveChartRevealRegistered = true;
   }
+}
+
+
+function createIspChart(context, config) {
+  // Semua chart Deployment dan Planning menggunakan interaksi native Chart.js.
+  // Cartesian memilih kategori terdekat; donut memilih sektor terdekat di area canvas.
+  const type = String(config && config.type || '').toLowerCase();
+  const radial = ['doughnut', 'pie', 'polararea'].includes(type);
+  const options = (config && config.options) || {};
+  const pluginOptions = options.plugins || {};
+  const tooltipOptions = pluginOptions.tooltip || {};
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const tooltipDuration = reduceMotion ? 0 : 140;
+  const mode = radial ? 'nearest' : 'index';
+  const axis = radial ? 'xy' : (options.indexAxis === 'y' ? 'y' : 'x');
+  // intersect:false menjaga tooltip tetap aktif ketika pointer berada di area
+  // plot/kanvas, tidak harus tepat menimpa titik, batang, atau irisan donut.
+  const intersect = false;
+  const defaultCallbacks = Chart.defaults.plugins && Chart.defaults.plugins.tooltip
+    ? (Chart.defaults.plugins.tooltip.callbacks || {})
+    : {};
+  const localCallbacks = tooltipOptions.callbacks || {};
+
+  config.options = {
+    ...options,
+    animation: {
+      ...getChartMotionOptions(),
+      ...(options.animation && typeof options.animation === 'object' ? options.animation : {})
+    },
+    interaction: {
+      ...(options.interaction || {}),
+      mode,
+      axis,
+      intersect,
+      includeInvisible: false
+    },
+    // Events default Chart.js dipertahankan. Tidak ada listener pointer atau
+    // loop mousemove tambahan yang dapat menyebabkan beban berulang/freeze.
+    plugins: {
+      ...pluginOptions,
+      tooltip: {
+        ...tooltipOptions,
+        enabled: true,
+        mode,
+        axis,
+        intersect,
+        displayColors: tooltipOptions.displayColors !== false,
+        caretPadding: tooltipOptions.caretPadding ?? 8,
+        padding: tooltipOptions.padding ?? 10,
+        cornerRadius: tooltipOptions.cornerRadius ?? 9,
+        animation: {
+          ...(tooltipOptions.animation && typeof tooltipOptions.animation === 'object' ? tooltipOptions.animation : {}),
+          duration: tooltipDuration,
+          easing: 'easeOutQuart'
+        },
+        callbacks: {
+          ...defaultCallbacks,
+          ...localCallbacks
+        }
+      }
+    }
+  };
+
+  return new Chart(context, config);
 }
 
 async function initApp() {
