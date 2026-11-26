@@ -413,26 +413,36 @@
     }
     .sidebar-credit {
       display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 5px;
+      width: 100%;
+      min-width: 0;
+      color: var(--on-surface);
+      line-height: 1.2;
+    }
+    .sidebar-credit-main {
+      display: flex;
       flex-wrap: nowrap;
       align-items: center;
       justify-content: flex-start;
       gap: 5px;
-      width: 100%;
       min-width: 0;
       white-space: nowrap;
       color: var(--on-surface);
       font-family: 'Orbitron', 'Geist Mono', monospace;
-      font-size: 0.60rem;
+      font-size: 0.62rem;
       font-weight: 800;
-      letter-spacing: -0.045em;
-      line-height: 1.25;
+      letter-spacing: -0.025em;
+      text-shadow: 0 0 10px color-mix(in srgb, var(--primary) 16%, transparent);
     }
     .sidebar-credit-label {
       color: var(--on-surface);
       font-family: 'Orbitron', 'Geist Mono', monospace;
-      font-size: 0.59rem;
+      font-size: 0.62rem;
       font-weight: 800;
-      letter-spacing: -0.055em;
+      letter-spacing: -0.025em;
       white-space: nowrap;
     }
     .sidebar-telegram-link {
@@ -441,16 +451,27 @@
       gap: 3px;
       color: var(--primary);
       text-decoration: none;
-      font-family: 'Orbitron', 'Geist Mono', monospace;
-      font-size: 0.60rem;
-      font-weight: 800;
-      letter-spacing: -0.045em;
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.61rem;
+      font-weight: 700;
+      letter-spacing: 0.005em;
       white-space: nowrap;
       border-radius: var(--rounded-full);
+      transition: color var(--dur-short) ease, opacity var(--dur-short) ease;
     }
-    .sidebar-telegram-link:hover { text-decoration: underline; }
+    .sidebar-telegram-link:hover { color: var(--tertiary); text-decoration: underline; }
     .sidebar-telegram-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
     .sidebar-telegram-link svg { width: 13px; height: 13px; flex: 0 0 13px; }
+    .sidebar-copyright {
+      color: var(--on-surface-variant);
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.52rem;
+      font-weight: 400;
+      letter-spacing: 0.035em;
+      line-height: 1.25;
+      opacity: 0.72;
+      white-space: nowrap;
+    }
 
     /* ==========================================================================
        3. HEADER & ACTION BUTTONS (SYNC 2 SHEET NOTEBOOK + AI CHAT + MODE)
@@ -844,6 +865,62 @@
     .insight-donut-wrap canvas, .donut-wrap canvas, .plan-priority-chart canvas {
       cursor: crosshair;
       touch-action: pan-y;
+    }
+    /* Tooltip HTML bersama: independen dari redraw canvas agar tidak membeku. */
+    .isp-live-chart-tooltip {
+      position: fixed;
+      z-index: 12000;
+      max-width: min(320px, calc(100vw - 24px));
+      min-width: 150px;
+      padding: 10px 12px;
+      border: 1px solid var(--outline-variant);
+      border-radius: 11px;
+      background: color-mix(in srgb, var(--surface-container-high) 96%, transparent);
+      color: var(--on-surface);
+      box-shadow: 0 12px 34px rgba(0,0,0,.28);
+      backdrop-filter: blur(12px);
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transform: translate3d(0,5px,0) scale(.985);
+      transition: opacity 145ms ease, transform 145ms cubic-bezier(.2,.75,.25,1), visibility 145ms ease;
+      font-family: var(--font-body);
+      font-size: .76rem;
+      line-height: 1.45;
+      contain: layout paint style;
+    }
+    .isp-live-chart-tooltip.is-visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translate3d(0,0,0) scale(1);
+    }
+    .isp-live-chart-tooltip-title {
+      margin: 0 0 6px;
+      color: var(--on-surface);
+      font-family: var(--font-headline);
+      font-size: .78rem;
+      font-weight: 750;
+      letter-spacing: .01em;
+    }
+    .isp-live-chart-tooltip-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      padding: 2px 0;
+      color: var(--on-surface-variant);
+      overflow-wrap: anywhere;
+    }
+    .isp-live-chart-tooltip-dot {
+      flex: 0 0 8px;
+      width: 8px;
+      height: 8px;
+      margin-top: 4px;
+      border-radius: 3px;
+      box-shadow: 0 0 0 2px rgba(255,255,255,.05);
+    }
+    .isp-live-chart-tooltip-row strong { color: var(--on-surface); font-weight: 750; }
+    @media (prefers-reduced-motion: reduce) {
+      .isp-live-chart-tooltip { transition: none; }
     }
     .plan-need-note { margin: 0; padding: 9px 11px; border-radius: var(--rounded); background: var(--background); border: var(--hairline); color: var(--on-surface-variant); font-size: 0.73rem; line-height: 1.5; }
     .plan-insight-empty { padding: 20px; text-align: center; color: var(--on-surface-variant); font-size: 0.82rem; }
@@ -1296,15 +1373,18 @@
 
     <div class="sidebar-meta">
       <div class="sidebar-credit">
-        <span class="sidebar-credit-label">Develop By Akahd Visual Editor</span>
-        <span aria-hidden="true">|</span>
-        <a class="sidebar-telegram-link" href="https://t.me/hardana" target="_blank" rel="noopener noreferrer" aria-label="Hubungi @hardana melalui Telegram">
-          <svg viewBox="0 0 24 24" role="img" aria-label="Telegram">
-            <circle cx="12" cy="12" r="11" fill="#229ED9"></circle>
-            <path d="M18.8 6.5 16.6 17c-.16.74-.6.92-1.22.57l-3.38-2.49-1.63 1.57c-.18.18-.33.33-.67.33l.24-3.44 6.26-5.66c.27-.24-.06-.38-.42-.14l-7.74 4.88-3.33-1.04c-.72-.23-.74-.72.15-1.07l13.02-5.02c.6-.22 1.12.14.92 1.01Z" fill="#fff"></path>
-          </svg>
-          <span>@hardana</span>
-        </a>
+        <div class="sidebar-credit-main">
+          <span class="sidebar-credit-label">Develop By Akahd Visual Editor</span>
+          <span aria-hidden="true">|</span>
+          <a class="sidebar-telegram-link" href="https://t.me/hardana" target="_blank" rel="noopener noreferrer" aria-label="Hubungi @hardana melalui Telegram">
+            <svg viewBox="0 0 24 24" role="img" aria-label="Telegram">
+              <circle cx="12" cy="12" r="11" fill="#229ED9"></circle>
+              <path d="M18.8 6.5 16.6 17c-.16.74-.6.92-1.22.57l-3.38-2.49-1.63 1.57c-.18.18-.33.33-.67.33l.24-3.44 6.26-5.66c.27-.24-.06-.38-.42-.14l-7.74 4.88-3.33-1.04c-.72-.23-.74-.72.15-1.07l13.02-5.02c.6-.22 1.12.14.92 1.01Z" fill="#fff"></path>
+            </svg>
+            <span>@hardana</span>
+          </a>
+        </div>
+        <span class="sidebar-copyright">Copyright 2026</span>
       </div>
     </div>
   </aside>
@@ -2304,6 +2384,7 @@ function getSidebarFilteredRows(mod = appState.module) {
    5. NAVIGASI MODUL & THEME SWITCHER
    ============================================================================ */
 function switchModule(mod) {
+  hideIspLiveChartTooltip();
   appState.module = mod;
   const vDep = document.getElementById('view-deployment');
   const vPlan = document.getElementById('view-planning');
@@ -2756,6 +2837,7 @@ function renderRegionSubCharts(rows) {
       data: {
         labels: shortCats.map(p => p.label.replace('Material Delivery (Onsite)', 'Mat. Onsite').replace('Done Integrasi / GoLive', 'GoLive')),
         datasets: [{
+          label: 'Jumlah Node',
           data: shortCats.map(p => rRows.filter(x => x.prog === p.key).length),
           backgroundColor: shortCats.map(p => cssVar(p.colorVar)),
           borderRadius: 4
@@ -3984,7 +4066,8 @@ function configureChartMotion() {
   Chart.defaults.plugins = Chart.defaults.plugins || {};
   Chart.defaults.plugins.tooltip = Chart.defaults.plugins.tooltip || {};
   Object.assign(Chart.defaults.plugins.tooltip, {
-    enabled: true,
+    // Canvas tooltip dimatikan; semua informasi pointer ditangani satu tooltip HTML.
+    enabled: false,
     mode: 'index',
     intersect: false,
     displayColors: true,
@@ -4002,10 +4085,18 @@ function configureChartMotion() {
       },
       label: context => {
         const raw = context && context.raw;
-        const value = typeof raw === 'number'
-          ? raw.toLocaleString('id-ID')
+        const numeric = typeof raw === 'number' ? raw : Number(raw);
+        const value = Number.isFinite(numeric)
+          ? numeric.toLocaleString('id-ID')
           : (context && context.formattedValue != null ? context.formattedValue : String(raw ?? '—'));
+        const type = String(context && context.chart && context.chart.config && context.chart.config.type || '').toLowerCase();
         const series = context && context.dataset && context.dataset.label;
+        if (['doughnut', 'pie', 'polararea'].includes(type)) {
+          const values = context && context.dataset && Array.isArray(context.dataset.data) ? context.dataset.data : [];
+          const total = values.reduce((sum, item) => sum + (Number.isFinite(Number(item)) ? Number(item) : 0), 0);
+          const pct = total ? ((Number(raw) || 0) / total * 100).toFixed(1) : '0.0';
+          return ` ${context.label || 'Kategori'}: ${value} (${pct}%)`;
+        }
         return ` ${series || 'Nilai'}: ${value}`;
       }
     }
@@ -4104,8 +4195,226 @@ function configureChartMotion() {
 }
 
 
+let ispLiveTooltipElement = null;
+let ispLiveTooltipActiveChart = null;
+
+function getIspLiveTooltipElement() {
+  if (ispLiveTooltipElement && ispLiveTooltipElement.isConnected) return ispLiveTooltipElement;
+  let element = document.getElementById('ispLiveChartTooltip');
+  if (!element) {
+    element = document.createElement('div');
+    element.id = 'ispLiveChartTooltip';
+    element.className = 'isp-live-chart-tooltip';
+    element.setAttribute('role', 'status');
+    element.setAttribute('aria-live', 'polite');
+    element.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(element);
+  }
+  ispLiveTooltipElement = element;
+  return element;
+}
+
+function hideIspLiveChartTooltip(chart = null) {
+  if (chart && ispLiveTooltipActiveChart && ispLiveTooltipActiveChart !== chart) return;
+  const element = getIspLiveTooltipElement();
+  element.classList.remove('is-visible');
+  element.setAttribute('aria-hidden', 'true');
+  if (!chart || ispLiveTooltipActiveChart === chart) ispLiveTooltipActiveChart = null;
+}
+
+function normalizeIspTooltipLines(value) {
+  if (value === null || value === undefined || value === false) return [];
+  const source = Array.isArray(value) ? value : [value];
+  return source.flat(Infinity)
+    .filter(item => item !== null && item !== undefined && item !== '')
+    .map(item => String(item));
+}
+
+function getIspTooltipItemContext(chart, activeItem) {
+  const datasetIndex = Number(activeItem.datasetIndex) || 0;
+  const dataIndex = Number(activeItem.index) || 0;
+  const dataset = chart.data.datasets[datasetIndex] || {};
+  const raw = Array.isArray(dataset.data) ? dataset.data[dataIndex] : undefined;
+  let parsed = null;
+  try {
+    const meta = chart.getDatasetMeta(datasetIndex);
+    if (meta && meta.controller && typeof meta.controller.getParsed === 'function') {
+      parsed = meta.controller.getParsed(dataIndex);
+    }
+  } catch (_) { /* parsed value is optional for custom tooltip display */ }
+  const numeric = typeof raw === 'number' ? raw : Number(raw);
+  const formattedValue = Number.isFinite(numeric)
+    ? numeric.toLocaleString('id-ID')
+    : String(raw ?? '—');
+  return {
+    chart,
+    label: (chart.data.labels && chart.data.labels[dataIndex] != null) ? String(chart.data.labels[dataIndex]) : '',
+    parsed: parsed || { x: raw, y: raw },
+    raw,
+    formattedValue,
+    dataset,
+    datasetIndex,
+    dataIndex,
+    element: activeItem.element || null
+  };
+}
+
+function getIspTooltipDatasetColor(dataset, dataIndex) {
+  const candidate = dataset && (dataset.backgroundColor || dataset.borderColor);
+  if (Array.isArray(candidate)) return String(candidate[dataIndex] || candidate[0] || cssVar('--primary'));
+  return typeof candidate === 'string' ? candidate : cssVar('--primary');
+}
+
+function buildIspLiveTooltipMarkup(chart, activeItems) {
+  const tooltipOptions = chart.options && chart.options.plugins && chart.options.plugins.tooltip
+    ? chart.options.plugins.tooltip : {};
+  const callbacks = tooltipOptions.callbacks || {};
+  const contexts = activeItems.map(item => getIspTooltipItemContext(chart, item));
+  if (!contexts.length) return '';
+
+  let titleLines = [];
+  try {
+    const titleValue = typeof callbacks.title === 'function'
+      ? callbacks.title.call(tooltipOptions, contexts)
+      : contexts[0].label;
+    titleLines = normalizeIspTooltipLines(titleValue);
+  } catch (_) { titleLines = []; }
+  if (!titleLines.length) titleLines = normalizeIspTooltipLines(contexts[0].label || 'Detail Grafik');
+
+  const bodyRows = [];
+  contexts.forEach(context => {
+    let lines = [];
+    try {
+      const callbackValue = typeof callbacks.label === 'function'
+        ? callbacks.label.call(tooltipOptions, context)
+        : null;
+      lines = normalizeIspTooltipLines(callbackValue);
+    } catch (_) { lines = []; }
+    if (!lines.length) {
+      const name = context.dataset.label || context.label || 'Nilai';
+      lines = [`${name}: ${context.formattedValue}`];
+    }
+    try {
+      if (typeof callbacks.afterLabel === 'function') {
+        lines.push(...normalizeIspTooltipLines(callbacks.afterLabel.call(tooltipOptions, context)));
+      }
+    } catch (_) { /* ignore optional callback failures */ }
+    const color = getIspTooltipDatasetColor(context.dataset, context.dataIndex);
+    lines.forEach((line, index) => {
+      bodyRows.push(`<div class="isp-live-chart-tooltip-row"><span class="isp-live-chart-tooltip-dot" style="background:${escapeHtml(color)}"></span><span>${escapeHtml(line)}</span></div>`);
+    });
+  });
+
+  return `<div class="isp-live-chart-tooltip-title">${titleLines.map(escapeHtml).join('<br>')}</div>${bodyRows.join('')}`;
+}
+
+function positionIspLiveTooltip(element, event) {
+  const gap = 14;
+  const margin = 10;
+  // Measure after content update, before revealing to keep tooltip inside viewport.
+  element.style.left = '0px';
+  element.style.top = '0px';
+  const rect = element.getBoundingClientRect();
+  let left = Number(event.clientX || 0) + gap;
+  let top = Number(event.clientY || 0) + gap;
+  if (left + rect.width > window.innerWidth - margin) left = Number(event.clientX || 0) - rect.width - gap;
+  if (top + rect.height > window.innerHeight - margin) top = Number(event.clientY || 0) - rect.height - gap;
+  left = Math.max(margin, Math.min(left, window.innerWidth - rect.width - margin));
+  top = Math.max(margin, Math.min(top, window.innerHeight - rect.height - margin));
+  element.style.left = `${left}px`;
+  element.style.top = `${top}px`;
+}
+
+function attachIspLiveChartTooltip(chart) {
+  const canvas = chart && chart.canvas;
+  if (!canvas || canvas.__ispLiveTooltipBound) return;
+  const state = { raf: 0, latestEvent: null, disposed: false };
+  const hide = () => {
+    if (state.raf) cancelAnimationFrame(state.raf);
+    state.raf = 0;
+    state.latestEvent = null;
+    hideIspLiveChartTooltip(chart);
+  };
+  const render = () => {
+    state.raf = 0;
+    const event = state.latestEvent;
+    if (!event || state.disposed || !canvas.isConnected || chart.$destroyed) return;
+
+    let activeItems = [];
+    try {
+      const radial = ['doughnut', 'pie', 'polararea'].includes(String(chart.config.type || '').toLowerCase());
+      const indexAxis = chart.options && chart.options.indexAxis === 'y' ? 'y' : 'x';
+      const mode = radial ? 'nearest' : 'index';
+      const axis = radial ? 'xy' : indexAxis;
+      activeItems = chart.getElementsAtEventForMode(event, mode, {
+        intersect: false,
+        axis,
+        includeInvisible: false
+      }, false) || [];
+      // Fallback nearest keeps a tooltip available on plot gaps and sparse datasets.
+      if (!activeItems.length) {
+        activeItems = chart.getElementsAtEventForMode(event, 'nearest', {
+          intersect: false,
+          axis: radial ? 'xy' : 'xy',
+          includeInvisible: false
+        }, false) || [];
+      }
+    } catch (_) { activeItems = []; }
+
+    if (!activeItems.length) {
+      hideIspLiveChartTooltip(chart);
+      return;
+    }
+    const markup = buildIspLiveTooltipMarkup(chart, activeItems);
+    if (!markup) {
+      hideIspLiveChartTooltip(chart);
+      return;
+    }
+    const tooltip = getIspLiveTooltipElement();
+    tooltip.innerHTML = markup;
+    positionIspLiveTooltip(tooltip, event);
+    tooltip.setAttribute('aria-hidden', 'false');
+    tooltip.classList.add('is-visible');
+    ispLiveTooltipActiveChart = chart;
+  };
+  const onMove = event => {
+    state.latestEvent = event;
+    if (!state.raf) state.raf = requestAnimationFrame(render);
+  };
+  const onLeave = () => hide();
+  canvas.addEventListener('pointermove', onMove, { passive: true });
+  canvas.addEventListener('mousemove', onMove, { passive: true });
+  canvas.addEventListener('pointerleave', onLeave, { passive: true });
+  canvas.addEventListener('mouseleave', onLeave, { passive: true });
+  canvas.addEventListener('pointercancel', onLeave, { passive: true });
+  canvas.addEventListener('touchcancel', onLeave, { passive: true });
+
+  chart.$ispLiveTooltipCleanup = () => {
+    if (state.disposed) return;
+    state.disposed = true;
+    if (state.raf) cancelAnimationFrame(state.raf);
+    canvas.removeEventListener('pointermove', onMove);
+    canvas.removeEventListener('mousemove', onMove);
+    canvas.removeEventListener('pointerleave', onLeave);
+    canvas.removeEventListener('mouseleave', onLeave);
+    canvas.removeEventListener('pointercancel', onLeave);
+    canvas.removeEventListener('touchcancel', onLeave);
+    hideIspLiveChartTooltip(chart);
+    canvas.__ispLiveTooltipBound = false;
+  };
+  canvas.__ispLiveTooltipBound = true;
+}
+
+if (!window.__ispLiveTooltipGlobalEventsBound) {
+  window.addEventListener('blur', () => hideIspLiveChartTooltip());
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) hideIspLiveChartTooltip();
+  });
+  window.__ispLiveTooltipGlobalEventsBound = true;
+}
+
 function createIspChart(context, config) {
-  // Semua chart Deployment dan Planning menggunakan interaksi native Chart.js.
+  // Chart.js tetap dipakai untuk hit-testing data; tooltip visual dirender terpisah di HTML.
   // Cartesian memilih kategori terdekat; donut memilih sektor terdekat di area canvas.
   const type = String(config && config.type || '').toLowerCase();
   const radial = ['doughnut', 'pie', 'polararea'].includes(type);
@@ -4143,7 +4452,7 @@ function createIspChart(context, config) {
       ...pluginOptions,
       tooltip: {
         ...tooltipOptions,
-        enabled: true,
+        enabled: false,
         mode,
         axis,
         intersect,
@@ -4164,7 +4473,14 @@ function createIspChart(context, config) {
     }
   };
 
-  return new Chart(context, config);
+  const chart = new Chart(context, config);
+  attachIspLiveChartTooltip(chart);
+  const originalDestroy = chart.destroy.bind(chart);
+  chart.destroy = function destroyWithIspTooltipCleanup() {
+    if (typeof chart.$ispLiveTooltipCleanup === 'function') chart.$ispLiveTooltipCleanup();
+    return originalDestroy();
+  };
+  return chart;
 }
 
 async function initApp() {
